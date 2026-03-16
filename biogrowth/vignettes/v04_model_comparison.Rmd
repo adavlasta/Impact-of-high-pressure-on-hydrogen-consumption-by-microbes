@@ -1,0 +1,249 @@
+---
+title: "Comparing growth models"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparing growth models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(biogrowth)
+library(tidyverse)
+```
+
+One of the main goals of **biogrowth** is to ease comparison between different modeling approaches. For that reason, the package includes several growth models, as well as the possibility to fix any model parameters. With this same goal, the package also includes the function `compare_growth_fits()` to ease the comparison between model fits, both using graphical representations and statistical indexes. The type of information returned by this function varies slightly depending on the type of model. For that reason, this vignette is divided in subsections for each type.
+
+
+## Models fitted under constant environmental conditions
+
+For this demonstration, we will use the data on the growth of *Salmonella* spp. included in the package.
+
+```{r}
+data("growth_salmonella")
+head(growth_salmonella)
+```
+
+This data comprises data gathered under constant environmental conditions. Therefore, we will describe it using only primary models (`environment="constant"` in `fit_growth()`). We will compare three modeling approaches. The first one is the Baranyi model:
+
+```{r}
+fit1 <- fit_growth(growth_salmonella, 
+                   list(primary = "Baranyi"), 
+                   start = c(lambda = 0, logNmax = 8, mu = .1, logN0 = 2), 
+                   known = c(),
+                   environment = "constant"
+                   )
+```
+
+The second one is the Baranyi model fixing the duration of the lag phase to zero (`lambda=0`):
+
+```{r}
+fit2 <- fit_growth(growth_salmonella, 
+                   list(primary = "Baranyi"), 
+                   start = c(logNmax = 8, mu = .1, logN0 = 2), 
+                   known = c(lambda = 0),
+                   environment = "constant"
+                   )
+```
+
+And the third one is the modified Gompertz model:
+
+```{r}
+fit3 <- fit_growth(growth_salmonella, 
+                   list(primary = "modGompertz"), 
+                   start = c(C = 8, mu = .1, logN0 = 2, lambda = 0), 
+                   known = c(),
+                   environment = "constant"
+                   )
+```
+
+Once the three models have been fitted, we can call `compare_growth_fits()`. This function takes as only argument a list of models. Although it does not have to be named, we recommend naming it because every output will be labeled according to these names.
+
+```{r}
+my_models <- list(
+  Baranyi = fit1,
+  `Baranyi no-lag` = fit2,
+  `mod Gompertz` = fit3
+)
+
+salmonella_models <- compare_growth_fits(my_models)
+```
+
+The function return an instance of `GrowthComparison` with several S3 methods for comparing among the models fitted. The print method shows the type of model fitted, as well as several statistical indexes describing the goodness of fit. The models are arranged in descending AIC, so the first row would included the preferred model.
+
+```{r}
+print(salmonella_models)
+```
+
+`GrowthComparison` also includes an S3 plot method to evaluate the model fits. It can make three type of plots. The default one is a comparison between the fitted curves and the experimental data. Note that the model names in the legend are the sames as those defined in the input argument.
+
+```{r, fig.width=6}
+plot(salmonella_models)
+```
+
+By passing, `type=2` to the plot function, the function instead compares the parameter estimates. In this plot, the dots show the estimated values and the error bars their associated standard errors. Note that different models have different model parameters (e.g. the modified Gompertz uses $C$ instead of $logN_{max}$), so some bars may be missing in some facets. The same happens if some model parameter was fixed prior to model fitting.
+
+```{r, fig.width=6}
+plot(salmonella_models, type = 2) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+The last type of plot is a plot of the residuals. This plot includes a trend line of the residuals (calculated using loess). Clear deviations of this trend line with respect to the horizontal dashed line (residual = 0) is often an indicator of a poor model fit.
+
+```{r, fig.width=6}
+plot(salmonella_models, type = 3)
+```
+
+The statistical indexes of the fit can be retrieved using the `summary()`
+
+```{r}
+summary(salmonella_models)
+```
+
+And the table of parameter estimates using `coef()`
+
+```{r}
+coef(salmonella_models)
+```
+
+## Models fitted under dynamic environmental conditions
+
+In the case of models fitted under dynamic environmental conditions, the input arguments, output and S3 methods are identical to the ones for static environmental conditions. Please check the documentation of `compare_growth_fits()` for an example.
+
+
+## Growth models fitted to multiple experiments (global fit)
+
+In the case of global fits, the `compare_growth_fits()` function has many similarities with respect to fittings using `approach="single"`. We first need to fit (at least) two growth models to a set of experiments:
+
+```{r}
+data("multiple_counts")
+data("multiple_conditions")
+
+sec_models <- list(temperature = "CPM", pH = "CPM")
+
+known_pars <- list(Nmax = 1e8, N0 = 1e0, Q0 = 1e-3,
+                   temperature_n = 2, temperature_xmin = 20, 
+                   temperature_xmax = 35,
+                   pH_n = 2, pH_xmin = 5.5, pH_xmax = 7.5, pH_xopt = 6.5,
+                   temperature_xopt = 30)
+
+my_start <- list(mu_opt = .8)
+
+global_fit <- fit_growth(multiple_counts, 
+                         sec_models, 
+                         my_start, 
+                         known_pars,
+                         environment = "dynamic",
+                         algorithm = "regression",
+                         approach = "global",
+                         env_conditions = multiple_conditions
+) 
+
+sec_models <- list(temperature = "CPM", pH = "CPM")
+
+known_pars <- list(Nmax = 1e8, N0 = 1e0, Q0 = 1e-3,
+                   temperature_n = 1, temperature_xmin = 20, 
+                   temperature_xmax = 35,
+                   pH_n = 2, pH_xmin = 5.5, pH_xmax = 7.5, pH_xopt = 6.5,
+                   temperature_xopt = 30)
+
+my_start <- list(mu_opt = .8)
+
+global_fit2 <- fit_growth(multiple_counts, 
+                         sec_models, 
+                         my_start, 
+                         known_pars,
+                         environment = "dynamic",
+                         algorithm = "regression",
+                         approach = "global",
+                         env_conditions = multiple_conditions
+) 
+
+```
+
+Then, we can call the function passing a (named) list with the models as only argument:
+
+```{r}
+global_comparison <- compare_growth_fits(list(`n=2` = global_fit, `n=1` = global_fit2))
+```
+
+This returns and instance of `GlobalGrowthComparison`. This function has the same S3 methods as `GrowthComparison`. The only difference is that the comparison of the growth curves is divided by facets for each experiment
+
+```{r, fig.width=6}
+plot(global_comparison)
+```
+
+The same applies to the residuals plot
+
+```{r, fig.width=6}
+plot(global_comparison, type = 3)
+```
+
+The rest, are exactly the same
+
+```{r, fig.width=6}
+print(global_comparison)
+plot(global_comparison, type = 2)
+summary(global_comparison)
+coef(global_comparison)
+
+```
+
+## Fitting of secondary models
+
+For comparing the fit of secondary growth models, the package includes the `compare_secondary_fits()` function. The approach of this function is very similar to the one implemented in  `compare_growth_fits()`. As an illustration, we will use the example data included in the package.
+
+```{r}
+data("example_cardinal")
+head(example_cardinal)
+```
+
+We first need to fit at least two different models to this dataset. In this case, we will compare the effect of using $n=1$ or $n=2$ in the secondary model for temperature.
+
+```{r}
+sec_model_names <- c(temperature = "Zwietering", pH = "CPM")
+
+known_pars <- list(mu_opt = 1.2, temperature_n = 1,
+                   pH_n = 2, pH_xmax = 6.8, pH_xmin = 5.2)
+                   
+my_start <- list(temperature_xmin = 5, temperature_xopt = 35,
+                 pH_xopt = 6.5)
+                 
+fit1 <- fit_secondary_growth(example_cardinal, my_start, known_pars, sec_model_names)
+
+known_pars <- list(mu_opt = 1.2, temperature_n = 2,
+                   pH_n = 2, pH_xmax = 6.8, pH_xmin = 5.2)
+                   
+fit2 <- fit_secondary_growth(example_cardinal, my_start, known_pars, sec_model_names)
+
+```
+
+We can now pass both models to `compare_secondary_fits()` as a named list
+
+```{r}
+my_models <- list(`n=1` = fit1, `n=2` = fit2)
+
+secondary_comparison <- compare_secondary_fits(my_models)
+```
+
+The function returns an instance of `SecondaryGrowthComparison`. It includes similar S3 methods as those defined for the other types of model fits. The main difference is that it cannot plot directly the fitted model against the data. The reason for that is that `fit_secondary_growth` can use an arbitrary number of dimensions (in the example: temperature and pH). Therefore, representing the predictions as a function of a unique factor is not very informative.
+
+```{r, fig.width=6}
+print(secondary_comparison)
+
+plot(secondary_comparison)
+plot(secondary_comparison, type = 2)
+
+coef(secondary_comparison)
+summary(secondary_comparison)
+```
+
+
+

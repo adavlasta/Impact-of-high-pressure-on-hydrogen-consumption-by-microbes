@@ -1,0 +1,59 @@
+# 1. Load the required libraries
+library(tidyverse)
+library(biogrowth)
+library(RcppCNPy)
+
+# Read the .npy file into an R matrix
+time<- npyLoad("/Users/adaciortan/Desktop/experiment data/daca ai fii un stick/the column/2026-02-10_h2-200bar_SRB-time.npy")/ (60 * 24)
+
+volume_1 <- npyLoad("/Users/adaciortan/Desktop/experiment data/daca ai fii un stick/the column/2026-02-10_h2-200bar_SRB-volume_1.npy")
+volume_2 <- npyLoad("/Users/adaciortan/Desktop/experiment data/daca ai fii un stick/the column/2026-02-10_h2-200bar_SRB-volume_2.npy")
+
+volume_diff <- volume_1 - volume_2
+
+# 2. Define the constants
+density_h2_kg_m3 <- 14.030  # kg/m^3
+molar_mass_h2_g_mol <- 2.016 # g/mol
+mmol_h2 <- (volume_diff * density_h2_kg_m3 / molar_mass_h2_g_mol)
+
+# 1. Stitch the arrays together, adding 1 to the mmol calculation
+srb_data <- data.frame(
+  Time = as.numeric(time),
+  Hydrogen_mmol = as.numeric(mmol_h2) + 5  # Your baseline shift!
+)
+
+
+# 2. View the table to confirm
+head(srb_data)
+
+# 3. Fit the model normally
+library(biogrowth)
+
+my_guess <- make_guess_primary(srb_data,
+                               primary_model = "modGompertz",
+                               formula = Hydrogen_mmol ~ Time)
+
+srb_fit <- fit_growth(srb_data,
+                      list(primary = "modGompertz"),
+                      start = my_guess,
+                      known = c(),
+                      formula = Hydrogen_mmol ~ Time)
+
+summary(srb_fit)
+
+
+
+p <- plot(srb_fit, 
+          label_x = "Time (units)", 
+          label_y1 = "H2 (mmol + 5 shift)",
+          line_col = "#E41A1C",    # Bright Red for the curve
+          line_size = 1.5,         # Thicker line to stand out
+          point_col = "#377EB8",   # Blue for raw data
+          point_alpha = 0.2,       # Faded points so the red line is visible
+          point_shape = 16,        # Solid circle
+          point_size = 0.5) +      # Smaller points for better density handling
+     theme_minimal() +
+     labs(title = "SRB Hydrogen Consumption: Modified Gompertz Fit")
+
+# Show the plot
+print(p)

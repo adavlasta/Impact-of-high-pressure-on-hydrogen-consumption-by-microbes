@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Modelling constant environmental conditions using secondary models</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Modelling constant environmental conditions
+using secondary models</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(biogrowth)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span></code></pre></div>
+<p>The <strong>biogrowth</strong> package implements two modeling
+approaches. The first one is based on the use of primary growth models
+to describe the relationship between the population size and the elapsed
+time. The second one, expands the primary model considering the effect
+of changes in the experimental conditions on the specific growth rate
+(parameter <span class="math inline">\(\mu\)</span>). This is reflected
+in the argument <code>environment</code> of
+<code>predict_growth()</code> (and also <code>fit_growth()</code>),
+which can take two values: “constant” or “dynamic”. In the first case,
+the function only takes a <code>primary_model</code> (indeed, passing a
+<code>secondary_model</code> will return a warning). The logic for this
+is that the secondary model describes how the environmental conditions
+affect the kinetic parameters of the primary model (the growth rate).
+Therefore, the minimum model to describe growth under static conditions
+is the one that only includes a primary model. Nonetheless, the function
+can still predict microbial growth under isothermal conditions using
+<code>environment=&quot;dynamic&quot;</code>. This can be useful in situations
+were the environmental conditions are constant, but the response of the
+population is described using secondary models.</p>
+<p>To show this, let’s define an environmental profile where we only
+consider a constant temperature of 35ºC.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>my_conditions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">50</span>),</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                            <span class="at">temperature =</span> <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">35</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                            )</span></code></pre></div>
+<p>Next, we define primary and secondary models as usual.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>q0 <span class="ot">&lt;-</span> <span class="fl">1e-4</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>mu_opt <span class="ot">&lt;-</span> .<span class="dv">5</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>my_primary <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">mu_opt =</span> mu_opt,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>                   <span class="at">Nmax =</span> <span class="fl">1e8</span>,<span class="at">N0 =</span> <span class="fl">1e2</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>                   <span class="at">Q0 =</span> q0)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>sec_temperature <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;CPM&quot;</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>                        <span class="at">xmin =</span> <span class="dv">5</span>, <span class="at">xopt =</span> <span class="dv">35</span>, <span class="at">xmax =</span> <span class="dv">40</span>, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>my_secondary <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">temperature =</span> sec_temperature)</span></code></pre></div>
+<p>Finally, we call <code>predict_growth</code> after defining the time
+points of the simulation.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>my_times <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">50</span>, <span class="at">length =</span> <span class="dv">1000</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="do">## Do the simulation</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>dynamic_prediction <span class="ot">&lt;-</span> <span class="fu">predict_growth</span>(<span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>, </span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>                                     my_times,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>                                     my_primary,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>                                     my_secondary,</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>                                     my_conditions)</span></code></pre></div>
+<p>Because the temperature during the simulation equals the cardinal
+parameter <span class="math inline">\(X_{opt}\)</span>, the predicted
+population size is identical to the one calculated using
+<code>predict_growth</code> with <code>environment=&quot;constant&quot;</code> for
+the Baranyi model (calculations for <code>environment=&quot;dynamic&quot;</code>
+are always based on the Baranyi model) when <span class="math inline">\(\mu = \mu_{opt}\)</span> and <span class="math inline">\(\lambda = \frac{ \ln \left(1 +1/Q_0 \right)
+}{\mu_{opt}}\)</span>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fu">Q0_to_lambda</span>(q0, mu_opt)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>primary_model <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;Baranyi&quot;</span>, </span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>                      <span class="at">logN0 =</span> <span class="dv">2</span>, <span class="at">logNmax =</span> <span class="dv">8</span>, <span class="at">mu =</span> mu_opt, <span class="at">lambda =</span> lambda)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>static_prediction <span class="ot">&lt;-</span> <span class="fu">predict_growth</span>(my_times, primary_model)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="fu">plot</span>(static_prediction) <span class="sc">+</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> logN), <span class="at">linetype =</span> <span class="dv">2</span>, </span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>              <span class="at">data =</span> dynamic_prediction<span class="sc">$</span>simulation,</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>              <span class="at">colour =</span> <span class="st">&quot;green&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The advantages of using a model including a secondary model for
+modeling growth under constant environmental conditions are evident when
+simulations are made for several temperatures. Using
+<code>environment=&quot;constant&quot;</code> would require a calculation of the
+value of <span class="math inline">\(\mu\)</span> for each temperature
+separately. Because the relationship between <span class="math inline">\(\mu\)</span> and temperature is included in the
+secondary model, a separate calculation is not required when using
+<code>environment=&quot;dynamic&quot;</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>max_time <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>) <span class="sc">%&gt;%</span>  <span class="co"># Temperatures for the calculation</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">set_names</span>(., .) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="fu">map</span>(.,  <span class="co"># Definition of constant temperature profile</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>      <span class="sc">~</span> <span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">c</span>(<span class="dv">0</span>, max_time),</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>               <span class="at">temperature =</span> <span class="fu">c</span>(., .))</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  <span class="fu">map</span>(.,  <span class="co"># Growth simulation for each temperature</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>      <span class="sc">~</span> <span class="fu">predict_growth</span>(<span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>, </span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>                                     my_times,</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>                                     my_primary,</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>                                     my_secondary,</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>                                     <span class="at">env_conditions =</span> .,</span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>                                     <span class="at">logbase_mu =</span> <span class="dv">10</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>  <span class="fu">imap_dfr</span>(.,  <span class="co"># Extract the simulation</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>           <span class="sc">~</span>  <span class="fu">mutate</span>(.x<span class="sc">$</span>simulation, <span class="at">temperature =</span> .y)</span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>           ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> logN, <span class="at">colour =</span> temperature)) <span class="sc">+</span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>  <span class="fu">theme_cowplot</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAz1BMVEUAAAAAADoAAGYAOjoAOmYAOpAAZrYAsPYAv306AAA6ADo6AGY6OgA6Ojo6OmY6ZmY6ZpA6ZrY6kLY6kNtmAABmOgBmOjpmZgBmZjpmZmZmZpBmkGZmkLZmkNtmtttmtv+QOgCQZgCQZjqQZmaQtraQttuQ2/+jpQC2ZgC2Zjq2kGa2tpC2tra2ttu22/+2/7a2/9u2///bkDrbkGbbtmbbtpDbtrbb27bb29vb2//b/9vb///na/P4dm3/tmb/25D/27b/29v//7b//9v///8J++4PAAAACXBIWXMAAA7DAAAOwwHHb6hkAAANTklEQVR4nO2da2PbthWGITeyo1xat5a3boszxV0SZnO9mrG3LLYpR9L//00jQIIEAVAHAHFV8H6wZQIghcc4BxfignZZe4VCf4HYlQEByoAAZUCAMiBAGRCgDAhQBgTIAND3xTQDApQBAcqAAGVAgBRyWyKE/q6X5IAE57acfdhVLKEMaKDt6rj+WRxrJDkoZUCAsokBUshthVDNqIlNpPuMByPpPsWR4NwWRze79eJMJ8lQNK8nJyfS8OfPn2ve0afA3K4X2LrKmpJykqF6PtLguPEo5LYi5lVRI1NJMhDIR+tu/qVYgirjEkR9SaJ8nPugBwCQzr2CSCG3RV1xMXw0AbW/Uy1AzjurqRcg14D2u+gE+DgH1P5OtgAFBZSABwoMSP/Z/uUHULoFyDGg9AtQBgQpAwLkBVDCfDIgSE4BPWRA+7XPBaVRyYcEpP/gIPIBKGULy4AghQKUCp8MCJJLQIfgo0MBSqWS9wJINtyaDB8vgCRBGRBWBgQoAwI0DigdPi4B7avE9J8aSu4BpV2J+QAkCcqAsPa4oAwI6yB8dAYEKQMClCCgb5NS697FOSDrfD6/vIEj2buLO0CuClBxZAOQ8l0yIECpAdquEELHu93TJUKzN/f1lWL+9RLNLnbb+srP9zjrf3xC6MdrHLuLtV0dl+joenf7ilxo7rJdzUnQ/J4G93fVza1BklFAk5qJLaD1gqwaIQuR5u/wx7c4AM/GLY7+jD/hme99rO3qhwWa35fNYpMzERAJZu6qm1uDJOOA9B/JihhHgX65320/4UVIBZpf7+4W+Odtncn679l7HHTMxqqJ1Ow2y7qU7NZLHKu+CwuITHRm7qqbW1ZagCRdVQuA1gvyXyZr2QpcVrYrjI3kmPxNLjCxmvBaX65+e4UkgHAwe9dOzgGJAVYANbZCs8rklbrfcvaBidWE03QSQPgTe1fd3LKKCVD9WQHQ0U0Tvlmin978/l+ZiQ0AsTWcM0CuXJCwdkQAxJhYF6sJbxZObnpAOCn+kwI6Ex+XIKAawHY1u6hzdIudhgAIPbtunDQTiwI6vt89nSOKsahdc+2fKSD2rpq5HSgwoJKp5kkuhRL0ippJH6szMWpC5C4V/uPZOe+imLVxKQLakBKAm3ToFLcGRR/0Rx12SvxsF6slUJce9MNbXHqau3xeoNOvnQ9i4vdyDCjAWIedrkgn74CcD7cmD0j/gXr6bgB9VI3IKRFAk330R1NAlhUvINWv41i+ATm3MNuKFVAsfBwDSt/CVHKLG+DavZOJgGJx0Sq5repW+Gapu8HSCCDVZmI0fODcbld4DEB795cxQIpfKyFA6xcfuCsqgCb66HgsTGF7nKN/L/X37pgKSC2aD4G5LREZe2t8kPIWXWMj9ocIqNlgSdMHTfPREVmYAiCCptlmSTHJbqqPnsZnTeYlNKOHx2BsSAo+iAB6obdFV0BAm6XwjacIzO1mabJF1yRAkyysat/aVJZGPeDclnVDsWkMKSeZCkgpllwVOmvQlNOti0ght5X+Fl0PckB+6rAGUPGa+9qGctNZHanl7RSgR15ceEVfB9aUphNyCoi/7N7CsBjvY8ERxQdociOIocK2TgwVISDNryOIBTS9rvcJSK0dbQeQuIGoobwCUrn79G5GW4uR6XlpOWk/BYgWm4I7q8BQbG6/fWH0P6UkIyKAzGr5iPqpRExu6eQQcZbVaJIxNYD4qyqAYurIEzG53f72F6pzhOYTAAW1MMuS5Xb7zwWZkq2RZKgDB/R0jp7taz64BBSdhYm53X5CeDq1ThJBEwApxPErPrd353gOpFYSUYcLqC4+swu9JDJJAaVpYcPc3pIVD1pJpJLW8mkWoEE1f4nQGysNxYCAyDoe0sGouPm8hnLRUDR2QTb41FBK/DIDnwRSWSDElqD/XDH6fbQmMwOk0pWfDqg7R6YZRS88vPYxSGLuo/W/jFQVXsjCn7hjqJgAKfL5yEuIURzdNENlDsaD+h69chJBjgGBqmovLR5JZCgut6yjnr1VSiLKsBKz1QiqqI92AWj7eYF+/Me//oRmf/t1MTLe5AwQGENJFanlnZlY0TQiSrJYaC6tyYwAebOwssmAKyfdvvknv+lnIIkgQxdkx8LKtti7quZDAgJjKKhfVemgoYhVt9TJf6Aiy+zNTCwkoHbnAAymtN7VIKp7MKdXV5e1g24X28NJeJkBirAjTyTk9o6s+Hz2vn39r5KEk5mPjpSPLLffrq7Gu/LyJAMdPKCpSYwAxWphktze/fr69U/vtZIMZQYIihBKfG7xgNNsgUbaiNIkvCSA4LGOZACVZMz+6XzP7DUAkKwSS9fCxHZQ03YYawNJkvAyAwRFCKY9LWnFJLzCuqBuTNrRRPLNkpYgr4As8qFj0q4mkjO9edUknEx8tDVAfSfe1UTyNR0PGudvAAj6FpZdEO6kOptIjjdIQXtfP9sHZNtF480XHE4k3375MmXygnNAz3nxEfCYYsQTyfUBWW4EVb3/tDvkaufNanALqxjDsjuRnJmCV+uvhg3F0IBK1vHEOJE8sIXRMel4J5IbANL/CqPqx6SjnUgeFhAzJu1gIrmVJCIgoB0db0eeyAeg/beLm08GBMk2IG0XFLmFRQBI/wt4lXtAaVtYcECx81EEVCjv0f19AqrUNzHXBGTfRXdzFuzPkx5V3c3XAnSiAUjh8Voio60YjKPpL/KHzt/pAWIv+LWwzfKMHoPgb570+sUHPR8U2gVhQB7nSeP/BQUEbtGl64LAp5sIb5rlbBKn5HF4G3TVEuQD0AmvYXBFxupdTQMWRf4V5oD2duUddTPwDvX+ALUjLEhtDzMR0L57u2oE4bUa/kwMS6sEnQQHVHtoz4tZ9ACxFzxbWDcU7Xk5lCNASs/WU0F3XPPZUNRIwgPa76P1nw2rG4p2NE96WhItHx37UFmjkID0Hx1AGRAg+4BUa/k0LMwFIObvfT46DT6uAe25TQa0229h+g8OogwIkFVAGpVYIi7aMaAQBYg2oL3tSK6TJAJA3aC9tx3JdZKouyBXFtYN2nvckVwjiQYg/ceqiwDyuCO5ehI/gB548RHISRdR7kjOAQpTgJpB+zgnkkcBqDt1dhffLNdIAPUjiZHtSM735UcBuW4kdlwim0jOF6AAgLpB+ygnkqtamMtuRjdoH+NEcmVA+s9UVzdoH+FE8igA2VYAQMl05IncARr10UnxsQ3o4AqQTUCqFqb/xJDKgAA5AzTmghKzMIeARmIlxicDgmQXEOyCUuPjDNCoC9J/XljZA6RkYam5aP+A9B8XWH4BpVeAXAEacUHp8bEL6AALkGdA+g8LrgwIkDVACi4oRQtzBUgaJUU+PgElWYCsAgJcUJJ83AA6oALkE5D+k2KQLUCgC0qUj01A3bwFWSWfqIHZBUQ/H1IBcgHooAqQE0BiaLp8bAECLCxdPg4ASSws4QLkApAQaMTn0SCNC9kB9PCwpwAZ8Hl8jIWP0u4v3IxsGaCuAFng8xgRHgVA/TkD40lwAWoACXx08cRFZ6ey+4uwCYYE0Bgf2SGo43qMjs5O2QexmzwISR4epHykZ8RK9dhKLbZfKQIqRksQXk2C+TC774+eoNvpkZPml/YpNUB0n/h+i65+rc3JCTmagD1bmM+/KHcZsi0lQNVgaaNByyBhqeS2Gq67yoA4ldy6tAxoqJKf0J8BDdSfM6Cc5KAE5pY5Z0A1yUHJ7tYUB6gMCFAGBMgEkE/Zz7Fubi2mk1yzGy2EMiBAGRCgDAhQJF8jXmVAgDIgQBkQoAwIUAYEyAiQeGzO+uXNIKB/HcvElR+70+x23l/q9/ezdDrPNJkAEndD3yzJa6EuoH8dy8SVH7vTHKzEXOr2/LG16fo0GQAS99OvmpOP+4DudSwTV37sTnOwEnuJ7vljbdv+aTIAJLyMrtAZyRUfgI+34C4Jx+40Byuxl+j+ftYOfpgmE0CSMz0aQFxAcXTDX+KP3WkPVmIv0f39rB0dMk0GgGSnwpB8cAH4ddrwknDsDj1YibnU7e9n7fCZaXIHqKI+mo3LHbtDD1YSblnfL11AaibWvI4V4g6O3ekOVhKi4cNnkjUxmfcUnHT7OlaIOzh2pztYSYz2QvDvgWSlmm8BMQH0dSxzaezYnWJYzds/nWea7DQUW0voAvrXsUzckWN3Cq6h2O3vl2xDUXZsTusqaADzOpaJKz92p+lqgNFCKXdWAWVAgDIgQBkQoAwIUAYEKAMClAEBcgboG7v5fsJyBejzy5sMaJ+K0L1wW8qAALkBRF6LHRMTK+ZfL9HsYre9ROhnbHFP9YfZm2RszwOgd7hj/xZfIWPxC0RfDCYhlybWAELz693dAv+8ReTvX+532082DizwIveAmrcXzYjj/H69IGWHnHCVhNwDomgooHYcOpUWQDBAqdRy/gFZOBTNp5wBql2PDNB2NbuoP94uvncfVHbV/BAQrebDj8YryhWgzTmaf5UBIg1FdHrt6LnWlYc7AGVAgDIgQBkQoAwIUAYEKAMClAEByoAAZUCAMiBAGRCgDAjQ/wGJ91quNw0raAAAAABJRU5ErkJggg==" /><!-- --></p>
+<p>Note, however, that <code>predict_growth()</code> does not include
+any secondary model for the lag phase. The reason for this is that there
+are no broadly accepted secondary models for the lag phase in predictive
+microbiology. Therefore, the value of <span class="math inline">\(\lambda\)</span> varies among the simulations
+according to <span class="math inline">\(\lambda(T) = \frac{ \ln \left(1
++1/Q_0 \right) }{\mu(T)}\)</span>.</p>
+<p>Another application of <code>predict_growth()</code> with
+<code>environment=&quot;dynamic&quot;</code> is including the impact of another
+environmental factor when temperature is kept constant. This can be done
+by defining a second secondary model.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>my_primary <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">mu_opt =</span> mu_opt,</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>                   <span class="at">Nmax =</span> <span class="fl">1e8</span>,<span class="at">N0 =</span> <span class="fl">1e2</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>                   <span class="at">Q0 =</span> q0)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>sec_temperature <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;CPM&quot;</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>                        <span class="at">xmin =</span> <span class="dv">5</span>, <span class="at">xopt =</span> <span class="dv">35</span>, <span class="at">xmax =</span> <span class="dv">40</span>, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>sec_pH <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;CPM&quot;</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>               <span class="at">xmin =</span> <span class="dv">4</span>, <span class="at">xopt =</span> <span class="dv">7</span>, <span class="at">xmax =</span> <span class="dv">8</span>, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>my_secondary_2 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">temperature =</span> sec_temperature,</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>                     <span class="at">pH =</span> sec_pH)</span></code></pre></div>
+<p>Then, we can call <code>predict_growth()</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>max_time <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">5</span>, <span class="fl">5.5</span>, <span class="dv">6</span>, <span class="fl">6.5</span>, <span class="dv">7</span>, <span class="fl">7.5</span>) <span class="sc">%&gt;%</span>  <span class="co"># pH values for the calculation</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">set_names</span>(., .) <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="fu">map</span>(.,  <span class="co"># Definition of constant temperature profile</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>      <span class="sc">~</span> <span class="fu">tibble</span>(<span class="at">time =</span> <span class="fu">c</span>(<span class="dv">0</span>, max_time),</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>               <span class="at">temperature =</span> <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">35</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>               <span class="at">pH =</span> <span class="fu">c</span>(., .))</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="fu">map</span>(.,  <span class="co"># Growth simulation for each temperature</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>      <span class="sc">~</span> <span class="fu">predict_growth</span>(<span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>, </span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>                                     my_times,</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>                                     my_primary,</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>                                     my_secondary_2,</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>                                     <span class="at">env_conditions =</span> .,</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>                                     <span class="at">logbase_mu =</span> <span class="dv">10</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>  <span class="fu">imap_dfr</span>(.,  <span class="co"># Extract the simulation</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>           <span class="sc">~</span>  <span class="fu">mutate</span>(.x<span class="sc">$</span>simulation, <span class="at">pH =</span> .y)</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>           ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> logN, <span class="at">colour =</span> pH)) <span class="sc">+</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>  <span class="fu">theme_cowplot</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>As above, note that the lag phase varies between the simulations
+according to <span class="math inline">\(\lambda(T, pH) = \frac{ \ln
+\left(1 +1/Q_0 \right) }{\mu(T, pH)}\)</span>.</p>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

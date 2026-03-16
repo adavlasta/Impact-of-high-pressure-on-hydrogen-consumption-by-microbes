@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Including uncertainty in growth predictions in biogrowth</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Including uncertainty in growth predictions
+in biogrowth</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(biogrowth)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
+<p>In most situations, growth predictions are surrounded by different
+sources of uncertainty and variability. For this reason, discrete growth
+predictions (i.e. growth curves) can be, in some cases, misleading.
+Consequently, <strong>biogrowth</strong> includes several functions to
+calculate growth predictions accounting for parameter uncertainty.
+Namely, it can account for the uncertainty of parameter estimates of
+primary growth models defined manually using
+<code>predict_growth_uncertainty()</code>. Also, it can include the
+uncertainty of a model fitted using a Monte Carlo algorithm with the
+<code>predictMCMC()</code> method.</p>
+<div id="growth-predictions-with-uncertainty-using-predict_growth_uncertainty" class="section level2">
+<h2>Growth predictions with uncertainty using
+<code>predict_growth_uncertainty()</code></h2>
+<p>The function <code>predict_growth_uncertainty()</code> allows the
+definition of the distribution of the parameters of the primary growth
+model. Then, it includes this uncertainty in the model predictions
+through Monte Carlo simulations. It has 6 arguments:</p>
+<ul>
+<li><code>model_name</code> defines the primary growth model,</li>
+<li><code>times</code> defines the time points where to make the
+calculations,</li>
+<li><code>n_sims</code> defines the number of Monte Carlo
+simulations,</li>
+<li><code>pars</code> defines the distribution of the model
+parameters,</li>
+<li><code>corr_matrix</code> correlation matrix between the model
+parameters. By default, this argument is set to an identity matrix
+(i.e. no correlation between parameters).</li>
+<li><code>check</code> states whether to do validity checks of the model
+parameters (<code>TRUE</code> by default).</li>
+</ul>
+<p>The calculations are done by taking a sample of size
+<code>n_sims</code> of the model parameters according to a multivariate
+normal distribution. For simulation, the population growth is predicted
+and the quantiles of the predicted population size is used as an
+estimate of the credible interval.</p>
+<p>For this example, we will use the modified Gompertz model</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>my_model <span class="ot">&lt;-</span> <span class="st">&quot;modGompertz&quot;</span></span></code></pre></div>
+<p>The <code>pars</code> argument defines the distribution of the model
+parameters. It must be a tibble with 4 columns (<code>par</code>,
+<code>mean</code>, <code>sd</code> and <code>scale</code>) and as many
+rows as model parameters. Then, for the modified Gompertz model, we will
+need 4 rows. The column <code>par</code> defines the parameter that is
+defined on each row. It must be a parameter identifier according to
+<code>primary_model_data()</code>. This function considers that each
+model parameter follows a marginal normal distribution with the mean
+defined in the <code>mean</code> column and the standard deviation
+defined in <code>sd</code>. This distribution can be defined in
+log-scale (by setting the value in <code>scale</code> to “log”),
+square-root scale (“sqrt”) or in the original scale (“original”). Note
+that, in order to omit the variability/uncertainty of any model
+parameter, one just has to set its corresponding standard error to
+zero.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>    <span class="sc">~</span>par, <span class="sc">~</span>mean, <span class="sc">~</span>sd, <span class="sc">~</span>scale,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="st">&quot;logN0&quot;</span>, <span class="dv">0</span>, .<span class="dv">2</span>, <span class="st">&quot;original&quot;</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="st">&quot;mu&quot;</span>, <span class="dv">2</span>, .<span class="dv">3</span>, <span class="st">&quot;sqrt&quot;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="st">&quot;lambda&quot;</span>, .<span class="dv">5</span>, .<span class="dv">1</span>, <span class="st">&quot;log&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="st">&quot;C&quot;</span>, <span class="dv">6</span>, .<span class="dv">5</span>, <span class="st">&quot;original&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    )</span></code></pre></div>
+<p>For the time points, we will take 100 points uniformly distributed
+between 0 and 15:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>my_times <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">15</span>, <span class="at">length =</span> <span class="dv">100</span>)</span></code></pre></div>
+<p>For the example, we will set the number of simulations to 1000.
+Nevertheless, it is advisable to repeat the calculations for various
+number of simulations to ensure convergence.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">1000</span></span></code></pre></div>
+<p>Once the arguments have been defined, we can call the
+<code>predict_growth_uncertainty()</code> function.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>unc_growth <span class="ot">&lt;-</span> <span class="fu">predict_growth_uncertainty</span>(my_model, my_times, n_sims, pars)</span></code></pre></div>
+<p>Before doing any calculations,
+<code>predict_growth_uncertainty()</code> makes several consistency
+checks of the model parameters (this can be turned off by passing
+<code>check=FALSE</code>). It returns an instance of
+<code>GrowthUncertainty</code> with the results of the simulation. It
+implements several S3 methods to facilitate the interpretation of the
+model simulations. The <code>print</code> method provides an overview of
+the simulation setting.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">print</span>(unc_growth)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; Growth prediction based on primary models with uncertainty</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; Primary model: modGompertz </span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; Mean values of the model parameters:</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; [1] 0.0 2.0 0.5 6.0</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; Variance-covariance matrix:</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; [1,] 0.04 0.00 0.00 0.00</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; [2,] 0.00 0.09 0.00 0.00</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; [3,] 0.00 0.00 0.01 0.00</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; [4,] 0.00 0.00 0.00 0.25</span></span></code></pre></div>
+<p>It also implements an S3 method for plot that can be used to
+visualize the credible intervals</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">plot</span>(unc_growth)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>In this plot, the solid line represents the mean of the simulations.
+Then, the two shaded areas represent, respectively, the space between
+the 10th and 90th, and the 5th and 95th quantiles.</p>
+<p>The plot method includes additional arguments to edit the aesthetics
+of the plot.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">plot</span>(unc_growth, <span class="at">ribbon80_fill =</span> <span class="st">&quot;purple&quot;</span>, <span class="at">ribbon90_fill =</span> <span class="st">&quot;pink&quot;</span>, <span class="at">alpha80 =</span> .<span class="dv">8</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Note that <code>GrowthUncertainty</code> is a subclass of
+<code>list</code>, making it easy to access several results of the
+simulation. Namely, it includes the following items:</p>
+<ul>
+<li><code>sample</code>: sample of model parameters used for the
+simulations</li>
+<li><code>simulations</code>: results of the individual simulations</li>
+<li><code>quantiles</code>: quantiles of the population size predicted
+in the simulations</li>
+<li><code>model</code>: model used for the simulations</li>
+<li><code>mus</code>: expected values of the model parameters used for
+the simulations.</li>
+<li><code>sigma</code>: variance-covariance matrix used for the
+simulations</li>
+</ul>
+<p>By default, the function considers that there is no correlation
+between the model parameters. This can be varied by defining a
+correlation matrix. Note that the rows and columns of this matrix are
+defined in the the same order as in <code>pars</code>, and the
+correlation is defined in the scale of <code>pars</code>. For instance,
+we can define a correlation of -0.7 between the square root of <span class="math inline">\(\mu\)</span> and the logarithm of <span class="math inline">\(\lambda\)</span>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>my_cor <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,   <span class="dv">0</span>,    <span class="dv">0</span>, <span class="dv">0</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>                   <span class="dv">0</span>,   <span class="dv">1</span>, <span class="sc">-</span><span class="fl">0.7</span>, <span class="dv">0</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>                   <span class="dv">0</span>, <span class="sc">-</span><span class="fl">0.7</span>,   <span class="dv">1</span>, <span class="dv">0</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>                   <span class="dv">0</span>,    <span class="dv">0</span>,   <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>                   <span class="at">nrow =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p>Then, we can include it in the call to the function</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>unc_growth2 <span class="ot">&lt;-</span> <span class="fu">predict_growth_uncertainty</span>(my_model, my_times, n_sims, pars, my_cor)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="fu">plot</span>(unc_growth2)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAEgCAMAAABrWDzDAAAAulBMVEUAAAAAADoAAGYAOmYAOpAAZrY6AAA6ADo6AGY6OgA6Ojo6OmY6ZmY6ZpA6ZrY6kLY6kNtmAABmOgBmOjpmZjpmZmZmZpBmkGZmkLZmkNtmtttmtv+QOgCQZgCQZjqQZmaQtraQttuQ2/+2ZgC2Zjq2kGa2tpC2tra2ttu22/+2/7a2///R0dHbkDrbkGbbtmbbtpDbtrbb29vb2//b/9vb///l5eX/tmb/25D/27b/29v//7b//9v///9zH5WkAAAACXBIWXMAAA7DAAAOwwHHb6hkAAALcUlEQVR4nO3d63bbxhVAYSih6dRtEslN2zhV3MZKq7opY9eNRNqi3v+1SvBigTecAc5czgH2/uEoXsJawODzDHhF9UikqCq9A+Q7AJEqAJEqAJEqAJEqAJEqAJEqAJGqHoAwR08BiFQBiFQBiFQBiFQBiFQBiFQBiFQBiFQBiFQBKG/3zhIPCEDKSp/hxInHD6AulT6d+ROHBECBlT6ThRLHBUABlT6LBRPHBkDtlT6BpRMHCECHpT0h/3GWOFwA2jQuFuGJAzdyQJAREkdwvIDQEpI4jKMEBJvgxLEcGyDcdEsc0JEAYs7pmTiywweEHU3i8A4dEHZ0iQM8aEDgUSeO8ZABwUafOMgDBgSfCImjPFhA6ImSOM4DBQSeSIkjPURA2ImXONgBGhbTqnrWbZOiYSdi4mjLGuaTu8eHq4Yg24DgEzVxvEUNy+vL1Z+zL34J36Rg6ImcOOKihsXzN103KRd8YicOuahh/sW/r6rqcvvb69TnOVXe+FT2E8dc/I1ZtVq9ltcOroGK8el9drLuZb/EUZcBXdRL2Nz8NVB2Pa4c9E4cdxnQms5i+tfwTfKX59rH3fQRIXHoA66B1oAal9L2ACXjM0Yy+4ljL2p4uKrnHtNLWGw+4yaznzj4sobZ5G77ZFDwJnmL5Qc2JxJHP0DDvPr8MD50k4zFWb5wcyZx/L2/mBrFD3jOJp4A54D0fph7WhPPgG9AWj/gkRJPgWdA2md/0CMnnoShAOo8Mkw+QYknwTEgHZ8Egz3ExLPgF5Bi/oFPcOJpcAuovx/4dEg8D14B9fYDn06JJ2IAgDoNCHy6JZ4Ip4B6+mH66Zp4JtwD6jIa9vjcW088Ez4BNY6ww9nK4KfYiU6VeCpcAmocYPi5jb98FTurGRPPhXNAJfiUO5sFEs+FR0BPhxfuBzv9Ek+GQ0BPRxfMJ4KfxOfBbZ4BmeZTeJCy5Q9Q1wkoB5+yI1I0x4Cy+IGMkDtAWf3AR2zggDR+gBOSN0DZ/GAnLK+A0vph6gnOGaBOE1BfP/DpkC9AORYwrnw6NWBAkfyUO1oX+QSUz0+5Y3WSK0DpFzD8dG2wgPr4YfnqnkdA+DGUJ0CJFzD49GmggCL4AVBQjgClvQLCT7/8AcKPqQAEIFV+AHVYwfCTL3eAQjh0BoSf3rkBlHICwk//vAEK8dAV0JEfAIU3QED4yRmAWMBUeQGU8QqoxOH5LUzDzeSu6yaRyzcBlTg6xwVpmFdGACXwAyBdIRoerooDYgKyWoiG2eRHN4CYgDIXoGHx/E3xa6BkgPCjrKnh04dG/9v9bX23wh2gwHuJxy/XBFTg0JzX0LC61Gn0+Sap9S0vS89ATEBma2hY/u1Pu15W1WQLaH2/5rEAyn9k7julYfmPafXNTsxsOyMVvW88fsx2QsPHl9WXb/b/qvAMxARktyMNy5+r6tu7g78cKCD86DvU8H41/bw9+i0ngHR+ANSnfQ2r6efiVbdNcsQEZLc9De+m1eR4+mndJEeJVjAmoBg1H8a/rqrvj59IbNskT2lWMPxESX4isW2TPDEBGa45A/33ttG/Dh+JndokT0kA4SdODt6RmGUFy3xMw8kNIJkEE1CJDjU8vSIfvEnqcgDKfEgD6kBD80L64oegTZKXYgVjAorVgYblr9Pq93//5x+ri798N228gNqySeqSXALhJ1aHGm6qy/o/s+rZwVvpz2+SuBSA8BOtoyVs8/xP/d/dz8ImqUvvB0CKAIQfVYfXQNebC596+VpMLSxh6VewrIczuA41zKvq69vb16sL6JWly6BN0hYIiAmoUEca3v+ufgj/5U+rVez0BAQganRCw6fb2/MvxZ/eJF0JVjD8xMz6SxlMQMY71vD+uxcv/vBTp00SFh8QfqJ2qGF16VxdTKszzyGe3CRpADLeoYbZ+j31H1+eeQR2apOkhQHCT7GOnge6WH8k7NxzQCc2SRoTkPVanokO3CRp0QHhJ3JHgHYzkCdATEDlank1PnSTlCUGlPFIhtqhhsXu/UBvTv76qU1SFhsQE1DsjjSsHoDVL2W0fL4wIyAmIPOd0LD88OH8k0CnN0kVgMxn+6WMtCtYvuMYcLY/mRoEiAmoZKe/4m7Vny08kZgUUL7DGHKmlzBWMPuNF1C2oxh2/gExARVttICyHcTAcwBIYAGgolkGxATkIACRqvEAwk+SvANiAiqcYUBMQB4CEKlyDgg/pQMQqZI11B813PuUWF5A7S5CAeEnVaKG9SfF9t5jnwkQE5CLRA2Laf2NU7PG+8u8A8qz+2MpUMO88SkNh4CYgJIVqOFmMwPlvO13qkugPHs/msI0zJtX0XYAsYKVL0jDfO9zqnkApVrBsuz8iArRMN//rhcA0VMBGmYH3xVkBhB+DCRrmB3eMiMnICYg6wU8D3T4XWVZALGCOUnUMNve+ynz80CsYE6y+mIqgJxkG1ArjEBA+EkagEiVUUDxVrB7ACVtVIAy7PjoMg2oVUYYICagxI0JUIb9Hl82AUVbwZiAUjciQOl3e4xZBtRKIwgQE1DyxgMo/V6PMq+AmICMNBpA6Xd6nJkExArmpyEDwk+GnALqOgEl3+XRNmBATEA5sguICchFFgGxgjlquIDwkyWzgJiAfDRYQPjJE4BIlUFA+PHUQAHxHFCuHAJiArKUUUBMQF7yBwg/prIHSL+C4SdjNgExAbnJHCAmIF9ZA4QfZw0aUModpU3GADEBecsWoHs1IPxkzhQg/PjLEKB7/DjMCqD7AD74MVhEQPfqWnVw/WwyQ4DadeDHZhEBiWdYkbx84adMPgB144OfjDkAVHW7esZP1owDqgL0MP2ULADQfO9WKzkBheDh4qdsMqD6hs3NmzZnAhQ298CndCKg5XV9v7Cbxk1TkwOqQvHAp3wBN5yrb1g429z2u3WTKG7C7TT1RBoM6p4M6Hm9es0D7htfKeukjanHSCKgzeXPPOCOhZ2nnP6hx0wOAWHHUt2WsNZNctqBj5UMXUSH24GPnSw+jG9xgx1r2Xsi8QQZ7Ngt4KWMWeBLGW1nXleMA6U0GXpDGVo8ZuU90eQ0AJEqAJEqAJEqAJEqAJEqAJEqAJEqAJEqAJGqPoCINIAiWswW+9YzcecAVDzL+wagbexbzwC0iX3rWU5ANMYARKoARKoARKoARKoARKpiATr8GjNDPVzVz70/k38xf4uv1h/4tTl4m52TRi8SoKNPHxpq8+l+iz1crT8xbnPwtjsnjV4cQMeffzZU84shTLWaeOpdszl4250TRy8OoONvYDDUzNip2TWvLtdnx+Tg7XZOHL1IgI6+A8ZQNy9Wi/hl6b042QaQ0cHb7JE0enEAHX8LlZ0eriZ3q3EwKWh9jqwO3nrnxNEbPqBN9v6B19kHdPTjYSNYwtZtLjSs5WAJW9cyeiO4iF5n87G83Yvox31A50dv+A/jN+fH3j/wurndh/F7upMvYUafC9u0PjWGL6KtDt72UZgwerFeyjj8GjNL3aweiFq8Avr8L9vm4G13Thg9XkwlVQAiVQAiVQAiVQAiVQAiVQAiVQAiVQAK6FP9ekP9tgY6CkByv371C4DOBSC5G5MvxBoJQHIAaglAUsvr+nNR6yXsZvLb6+ri1ePydVV9U69oH1c/XHw/6rUNQFJ7gH6sP2X3Q/039RvNF9PK7GcWcwUguXoJ2wCqJm8f30/rP99V6///9u5x+bPR94rkCUByT4Dqd+0srzdvI5zcLabruWd5PeYpCEByT4B2dHaAtt95O+ZH+ACSEwGN+VEagOTOAzL5Ruu8AUiuvvQ5BWh5ffFq9eO7KddA1Nbs88P4fUC7h/EG3xCfLwDJPbysJr+dArR+IrH6+m3pHSwZgEgVgEgVgEgVgEgVgEgVgEgVgEgVgEgVgEgVgEgVgEgVgEgVgEjV/wEtR7BKVHDAmQAAAABJRU5ErkJggg==" /><!-- --></p>
+</div>
+<div id="accounting-for-the-uncertainty-of-a-fitted-model-using-predictmcmc" class="section level2">
+<h2>Accounting for the uncertainty of a fitted model using
+<code>predictMCMC()</code></h2>
+<p>An alternative approach to account for uncertainty in model
+predictions is to use the distribution of the model parameters estimated
+from experimental data. In <strong>biogrowth</strong>, this can be done
+using the <code>predictMCMC()</code> S3 method of <code>GrowthFit</code>
+or <code>GlobalGrowthFit</code>. Note that this function is only
+available for models fitted using an Adaptive Monte Carlo algorithm
+(i.e., <code>algorithm=&quot;MCMC&quot;</code>). This function takes 5
+arguments:</p>
+<ul>
+<li><code>model</code> the instance of <code>GrowthFit</code> or
+<code>GlobalGrowthFit</code> to use for the calculations</li>
+<li><code>times</code> a numeric vector stating the time points where
+the solutions are calculated</li>
+<li><code>env_conditions</code> a tibble (or data.frame) describing the
+values of the environmental conditions</li>
+<li><code>niter</code> the number of Monte Carlo simulations</li>
+<li><code>newpars</code> a named list defining values for some model
+parameters</li>
+</ul>
+<p>First, we need a model fitted using <code>fit_growth()</code>. In
+this example, we will use a model fitted using
+<code>approach=&quot;global&quot;</code>. Nonetheless, the calculations of the
+predictions are exactly the same for a model fitted using
+<code>approach=&quot;single&quot;</code>. Note that, in this case, the model is
+fitted using an Adaptive Monte Carlo algorithm by setting
+<code>algorithm=&quot;MCMC&quot;</code>. This uses <code>FME::modMCMC()</code>
+instead of <code>FME::modFit()</code> for model fitting. We encourage
+the reader to read in detail the documentation of this function and
+references therein, as the interpretation of this fitting algorithm has
+several differences with respect to regression.</p>
+<p>The following code chunk fits the growth model using a global
+approach. For a detailed description of the <code>fit_growth()</code>
+function, the reader is referred to the vignette dedicated to model
+fitting.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="do">## We will use the data included in the package</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;multiple_counts&quot;</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;multiple_conditions&quot;</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="do">## We need to assign a model equation for each environmental factor</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>sec_models <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">temperature =</span> <span class="st">&quot;CPM&quot;</span>, <span class="at">pH =</span> <span class="st">&quot;CPM&quot;</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="do">## Any model parameter (of the primary or secondary models) can be fixed</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>known_pars <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Nmax =</span> <span class="fl">1e8</span>, <span class="at">N0 =</span> <span class="fl">1e0</span>, <span class="at">Q0 =</span> <span class="fl">1e-3</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>                   <span class="at">temperature_n =</span> <span class="dv">2</span>, <span class="at">temperature_xmin =</span> <span class="dv">20</span>, </span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>                   <span class="at">temperature_xmax =</span> <span class="dv">35</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>                   <span class="at">pH_n =</span> <span class="dv">2</span>, <span class="at">pH_xmin =</span> <span class="fl">5.5</span>, <span class="at">pH_xmax =</span> <span class="fl">7.5</span>, <span class="at">pH_xopt =</span> <span class="fl">6.5</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>                   </span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a><span class="do">## The rest, need initial guesses</span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a>my_start <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">mu_opt =</span> .<span class="dv">8</span>, <span class="at">temperature_xopt =</span> <span class="dv">30</span>)</span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12421</span>)</span>
+<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a>global_MCMC <span class="ot">&lt;-</span> <span class="fu">fit_growth</span>(multiple_counts, </span>
+<span id="cb12-24"><a href="#cb12-24" tabindex="-1"></a>                         sec_models, </span>
+<span id="cb12-25"><a href="#cb12-25" tabindex="-1"></a>                         my_start, </span>
+<span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a>                         known_pars,</span>
+<span id="cb12-27"><a href="#cb12-27" tabindex="-1"></a>                         <span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>,</span>
+<span id="cb12-28"><a href="#cb12-28" tabindex="-1"></a>                         <span class="at">algorithm =</span> <span class="st">&quot;MCMC&quot;</span>,</span>
+<span id="cb12-29"><a href="#cb12-29" tabindex="-1"></a>                         <span class="at">approach =</span> <span class="st">&quot;global&quot;</span>,</span>
+<span id="cb12-30"><a href="#cb12-30" tabindex="-1"></a>                         <span class="at">env_conditions =</span> multiple_conditions,</span>
+<span id="cb12-31"><a href="#cb12-31" tabindex="-1"></a>                         <span class="at">niter =</span> <span class="dv">100</span>,</span>
+<span id="cb12-32"><a href="#cb12-32" tabindex="-1"></a>                         <span class="at">lower =</span> <span class="fu">c</span>(.<span class="dv">2</span>, <span class="dv">29</span>),  <span class="co"># lower limits of the model parameters</span></span>
+<span id="cb12-33"><a href="#cb12-33" tabindex="-1"></a>                         <span class="at">upper =</span> <span class="fu">c</span>(.<span class="dv">8</span>, <span class="dv">34</span>)  <span class="co"># upper limits of the model parameters</span></span>
+<span id="cb12-34"><a href="#cb12-34" tabindex="-1"></a>                         ) </span>
+<span id="cb12-35"><a href="#cb12-35" tabindex="-1"></a><span class="co">#&gt; number of accepted runs: 13 out of 100 (13%)</span></span></code></pre></div>
+<p>Note that the number of iterations used in the model is too low for
+convergence of the fitting algorithm. This can be visualized by
+inspecting the trace plot of the Markov chain:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">plot</span>(global_MCMC<span class="sc">$</span>fit_results)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Therefore, this model should only be considered as an illustration of
+the functions included in the package, not as a “serious” model. For
+additional details on how to evaluate the convergence of this fitting
+algorithm, the reader is referred to the documentation of
+<strong>FME</strong> and references therein.</p>
+<p>Once the model has been fitted, we can define the settings for the
+simulation. The <code>predictMCMC()</code> method requires the
+definition of the variation of the environmental conditions during the
+simulation. This is defined as a tibble (or data.frame) with the same
+conventions as for <code>fit_growth()</code>. Note that this argument
+must defined the same environmental factors as the ones considered in
+the original model. In this example, we will describe a constant
+environmental profile where <code>temperature=30</code> and
+<code>pH=7</code>. Note that this is just an example, and dynamic
+profiles can also be calculated.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>my_conditions <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">time =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">40</span>),</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>                        <span class="at">temperature =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">30</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>                        <span class="at">pH =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">7</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>                        )</span></code></pre></div>
+<p>Then, we need to define the time points where the solution is
+calculated. We will use a uniformly distributed vector of length 50
+between 0 and 40</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>my_times <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">40</span>, <span class="at">length =</span> <span class="dv">50</span>)</span></code></pre></div>
+<p>The last argument we need to define is the number of Monte Carlo
+simulations to use for the calculations. The calculations are performed
+by taking a sample of size <code>niter</code> from the Markov chain of
+the model parameters. Then, for each parameter vector, the functions
+calculates the corresponding growth curve at each time point defined in
+<code>times</code>. For this example we will use 50 Monte Carlo
+simulations. This value is extremely low, and should only be used as an
+illustration of the implementation of the function.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>niter <span class="ot">&lt;-</span> <span class="dv">50</span></span></code></pre></div>
+<p>Once every argument has been defined, we can call the
+<code>predictMCMC()</code> method</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">124</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>uncertain_prediction <span class="ot">&lt;-</span> <span class="fu">predictMCMC</span>(global_MCMC,</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>                                    my_times,</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>                                    my_conditions, </span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>                                    <span class="at">niter =</span> niter</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>                                    )</span></code></pre></div>
+<p>The function returns an instance of <code>MCMCgrowth</code> with the
+results of the simulation. It includes several S3 methods to facilitate
+the interpretation of the results. The print method provides an overview
+of the simulation settings.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">print</span>(uncertain_prediction)</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co">#&gt; Growth prediction under dynamic conditions with parameter uncertainty</span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#&gt; Environmental factors included: time, temperature, pH </span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co">#&gt; Simulations based on the following model:</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt; Growth model fitted to data following a global approach conditions using MCMC</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="co">#&gt; Number of experiments: 2</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="co">#&gt; Environmental factors included: temperature, pH </span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a><span class="co">#&gt; Secondary model for temperature: CPM</span></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co">#&gt; Secondary model for pH: CPM</span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a><span class="co">#&gt; Parameter estimates:</span></span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a><span class="co">#&gt;           mu_opt temperature_xopt </span></span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a><span class="co">#&gt;        0.5095069       29.9829208 </span></span>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a><span class="co">#&gt; Fixed parameters:</span></span>
+<span id="cb18-22"><a href="#cb18-22" tabindex="-1"></a><span class="co">#&gt;             Nmax               N0               Q0    temperature_n </span></span>
+<span id="cb18-23"><a href="#cb18-23" tabindex="-1"></a><span class="co">#&gt;          1.0e+08          1.0e+00          1.0e-03          2.0e+00 </span></span>
+<span id="cb18-24"><a href="#cb18-24" tabindex="-1"></a><span class="co">#&gt; temperature_xmin temperature_xmax             pH_n          pH_xmin </span></span>
+<span id="cb18-25"><a href="#cb18-25" tabindex="-1"></a><span class="co">#&gt;          2.0e+01          3.5e+01          2.0e+00          5.5e+00 </span></span>
+<span id="cb18-26"><a href="#cb18-26" tabindex="-1"></a><span class="co">#&gt;          pH_xmax          pH_xopt </span></span>
+<span id="cb18-27"><a href="#cb18-27" tabindex="-1"></a><span class="co">#&gt;          7.5e+00          6.5e+00 </span></span>
+<span id="cb18-28"><a href="#cb18-28" tabindex="-1"></a><span class="co">#&gt; Parameter mu defined in log-10 scale</span></span>
+<span id="cb18-29"><a href="#cb18-29" tabindex="-1"></a><span class="co">#&gt; Population size defined in log-10 scale</span></span></code></pre></div>
+<p>The <code>plot()</code> method illustrates the distribution of the
+population size during the experiment.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">plot</span>(uncertain_prediction)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The solid line illustrates the median of the simulations for each
+time point. Then, the ribbons show the space between the 10th and 90th,
+and 5th and 95th percentiles of the simulations for each time point.</p>
+<p><code>MCMCgrowth</code> is defined as a subclass of
+<code>list</code>, so it is easy to access several aspects of the
+simulations. Namely, it has 5 entries:</p>
+<ul>
+<li><code>sample</code> a tibble with the sample of model parameters
+used for the simulations.</li>
+<li><code>simulations</code> a tibble with the results of every
+individual simulation used.</li>
+<li><code>quantiles</code> a tibble providing the calculated quantiles
+(5th, 10th, 50th, 90th, 95th) of the population size for each time
+point.</li>
+<li><code>model</code> the instance of <code>FitDynamicGrowthMCMC</code>
+used for the predictions.</li>
+<li><code>env_conditions</code> a tibble with the environmental
+conditions of the simulations.</li>
+</ul>
+<p>As already mentioned, the <code>newpars</code> argument can be used
+to define new values of the model parameters. As an illustration, we can
+fix <code>mu_opt=0.5</code>.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>uncertain_prediction2 <span class="ot">&lt;-</span> <span class="fu">predictMCMC</span>(global_MCMC,</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>                                    my_times,</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>                                    my_conditions, </span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>                                    <span class="at">niter =</span> <span class="dv">5</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>                                    <span class="at">newpars =</span> <span class="fu">list</span>(<span class="at">mu_opt =</span> <span class="fl">0.5</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a>                                    )</span></code></pre></div>
+<p>Inspecting the <code>sample</code> entry of the outcome shows that
+the value of <code>mu_opt</code> is fixed to 0.5 for these simulations,
+whereas <code>temperature_xopt</code> varies according to the fitted
+model.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>uncertain_prediction2<span class="sc">$</span>sample</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 5 × 3</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="co">#&gt;   mu_opt temperature_xopt  iter</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;            &lt;dbl&gt; &lt;int&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="co">#&gt; 1    0.5             29.3     1</span></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a><span class="co">#&gt; 2    0.5             29.5     2</span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a><span class="co">#&gt; 3    0.5             29.5     3</span></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a><span class="co">#&gt; 4    0.5             29.0     4</span></span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a><span class="co">#&gt; 5    0.5             29.3     5</span></span></code></pre></div>
+</div>
+<div id="accounting-for-uncertainty-when-calculating-the-time-to-reach-a-population-size" class="section level2">
+<h2>Accounting for uncertainty when calculating the time to reach a
+population size</h2>
+<p>The <strong>biogrowth</strong> package includes the
+<code>time_to_size()</code> function to estimate the elapsed time
+required to reach a given population size for growth models. By default,
+this function calculates a discrete value for the elapsed time.
+Nevertheless, this can be modified passing
+<code>type=distribution</code>. In this case, the function takes two
+arguments:</p>
+<ul>
+<li><code>model</code> an instance of <code>GrowthUncertainty</code> or
+<code>MCMCgrowth</code></li>
+<li><code>size</code> the target population size (in log units)</li>
+</ul>
+<p>The distribution of the time to reach the given is estimated by
+linear interpolation for each of the growth curves included in
+<code>model</code>. Therefore, its precision is strongly dependent on
+the number of simulations (i.e. the number of growth curves) and the
+density of the time points around the solution. For that reason,
+considering the low number of iterations and time points included in the
+simulations, the results presented here should only be considered as an
+illustration of the functions.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>unc_distrib <span class="ot">&lt;-</span> <span class="fu">time_to_size</span>(<span class="at">type =</span> <span class="st">&quot;distribution&quot;</span>, unc_growth, <span class="dv">3</span>)</span></code></pre></div>
+<p>The function returns an instance of <code>TimeDistribution</code>
+with the results of the calculation. It includes several S3 methods to
+facilitate the interpretation of the results. The <code>print</code>
+method provides an overall view of the results</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">print</span>(unc_distrib)</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="co">#&gt; Distribution of the time required to reach a target population size</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 5</span></span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a><span class="co">#&gt;   m_time sd_time med_time   q10   q90</span></span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a><span class="co">#&gt; 1   3.98   0.820     3.94  3.03  5.15</span></span></code></pre></div>
+<p>The <code>summary</code> method provides a table with several
+statistical indexes of the distribution of the time.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">summary</span>(unc_distrib)</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 5</span></span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="co">#&gt;   m_time sd_time med_time   q10   q90</span></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a><span class="co">#&gt; 1   3.98   0.820     3.94  3.03  5.15</span></span></code></pre></div>
+<p>The <code>plot</code> method shows an histogram of the distribution.
+In this plot, the median of the simulations is shown as a dashed, red
+line. The 10th and 90th percentiles are shown as grey, dashed lines.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">plot</span>(unc_distrib)</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>When interpreting the results of the calculation is important to
+consider how <code>NA</code>s are considered by the function. It is
+possible that, for some simulations, the target population size is not
+included in the growth curve. In that case, that particular calculation
+would results in a time of <code>NA</code>. This value is then omitted
+when making the calculations (medians, quantiles, histograms…). This can
+be relevant for population size in the edge of the simulations
+(e.g. close to <code>logN0</code> or <code>logNmax</code>) and can
+introduce a bias in the results.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

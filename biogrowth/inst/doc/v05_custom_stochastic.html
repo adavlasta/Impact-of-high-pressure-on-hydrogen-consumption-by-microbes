@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Custom distributions for uncertainty propagation</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Custom distributions for uncertainty
+propagation</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(biogrowth)</span></code></pre></div>
+<p>The <strong>biogrowth</strong> package includes two functions for
+making simulations including parameter uncertainty:
+<code>predict_growth_uncertainty()</code> and the generic
+<code>predictMCMC()</code>. The former includes parameter uncertainty
+considering that the model parameters follow a normal distribution with
+known mean and variance (defined on different scales). The latter, uses
+the Markov Chain of a model fitted using an MCMC algorithm to propagate
+the uncertainty in the parameter estimates.</p>
+<p>Although these functions account for parameter uncertainty in the
+model predictions, they do not allow the definition of custom
+distribution for the model parameters. Nonetheless, that is relatively
+simple to do using the <code>predict_growth()</code> function together
+with the functions from the <strong>tidyverse</strong>.</p>
+<p>First, we need to define the growth model to use and the time points
+where the solution is to be calculated. This is done in the same way as
+a “usual” calculation in <code>predict_growth()</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>my_model <span class="ot">&lt;-</span> <span class="st">&quot;modGompertz&quot;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>my_time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">length =</span> <span class="dv">1000</span>) </span></code></pre></div>
+<p>Next, we need to define the parameter sample. The
+<code>tibble()</code> function provides a convenient way for this. In
+this example, we will use 500 iterations, considering that <span class="math inline">\(\log N \sim Normal(0,1)\)</span>, <span class="math inline">\(\mu \sim Gamma(3,5)\)</span> and <span class="math inline">\(\lambda \sim Gamma(2,2)\)</span> with <span class="math inline">\(C=6\)</span> constant.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12412</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>niter <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>par_sample <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">logN0 =</span> <span class="fu">rnorm</span>(niter, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>                     <span class="at">C =</span> <span class="dv">6</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>                     <span class="at">mu =</span> <span class="fu">rgamma</span>(niter, <span class="at">shape =</span> <span class="dv">3</span>, <span class="at">rate =</span> <span class="dv">5</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>                     <span class="at">lambda =</span> <span class="fu">rgamma</span>(niter, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">rate =</span> <span class="dv">2</span>))</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>par_sample <span class="sc">%&gt;%</span> </span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(value)) <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="st">&quot;name&quot;</span>, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The <code>pmap()</code> function from <strong>purrr</strong> provides
+a convenient way to convert the parameter sample to a list that defines
+the model and we can pass to <code>predict_growth()</code> using the
+<code>map()</code> function (also from <strong>purrr</strong>).</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>my_predictions <span class="ot">&lt;-</span> par_sample <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>    <span class="fu">pmap</span>(., <span class="cf">function</span>(logN0, mu, lambda, C) </span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>        <span class="fu">list</span>(<span class="at">model =</span> my_model,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>             <span class="at">logN0 =</span> logN0, </span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>             <span class="at">mu =</span> mu,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>             <span class="at">lambda =</span> lambda,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>             <span class="at">C =</span> C)</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>    <span class="fu">map</span>(., </span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>        <span class="sc">~</span> <span class="fu">predict_growth</span>(my_time, .)</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>        )</span></code></pre></div>
+<p>Now, it is just a question of post-processing the simulations. For
+instance, we can calculate summary statistics of the simulations at each
+time point.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>summary_preds <span class="ot">&lt;-</span> my_predictions <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    <span class="fu">map</span>(., <span class="sc">~</span>.<span class="sc">$</span>simulation) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    <span class="fu">imap_dfr</span>(., <span class="sc">~</span> <span class="fu">mutate</span>(.x, <span class="at">sim =</span> .y)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="fu">group_by</span>(time) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">m_logN =</span> <span class="fu">median</span>(logN), </span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>              <span class="at">q10 =</span> <span class="fu">quantile</span>(logN, .<span class="dv">1</span>), </span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>              <span class="at">q90 =</span> <span class="fu">quantile</span>(logN, .<span class="dv">9</span>))</span></code></pre></div>
+<p>…that can be plotted using <code>ggplot()</code></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>summary_preds <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> time)) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> q10, <span class="at">ymax =</span> q90), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> m_logN))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

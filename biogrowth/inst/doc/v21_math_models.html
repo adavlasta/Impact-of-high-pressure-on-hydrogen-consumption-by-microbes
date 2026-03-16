@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Modelling approach</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Modelling approach</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(biogrowth)</span></code></pre></div>
+<div id="population-growth-in-predictive-microbiology" class="section level2">
+<h2>Population growth in predictive microbiology</h2>
+<p>In predictive microbiology mathematical models are usually divided in
+<em>primary</em> and <em>secondary</em> models (Perez-Rodriguez and
+Valero, 2012). Primary models describe the variation of the population
+size against time. These models are largely empirical, so they have
+model parameters that depend on the environmental conditions. A typical
+example is the relationship between the specific growth rate of
+microorganisms and the storage temperature. Predictive microbiology uses
+so-called, <em>secondary models</em> to describe the relationship
+between the parameters of the primary model and the environmental
+conditions.</p>
+</div>
+<div id="primary-growth-models-included-in-biogrowth" class="section level2">
+<h2>Primary growth models included in biogrowth</h2>
+<div id="modified-gompertz-model-under-static-conditions" class="section level3">
+<h3>Modified Gompertz model under static conditions</h3>
+<p>Zwietering et al. (1990) proposed a reparameterization of the
+Gompertz model with more meaningful parameters parameters. This model
+predicts the population size <span class="math inline">\(N(t)\)</span>
+for storage time <span class="math inline">\(t\)</span> as a sigmoid
+using the following algebraic equation</p>
+<p><span class="math display">\[
+\log_{10} N(t) = \log_{10} N_0 + C \left( \exp \left( -\exp \left( 2.71
+\frac{\mu}{C}(\lambda-t)+1 \right) \right) \right)
+\]</span></p>
+<p>where <span class="math inline">\(N_0\)</span> is the initial
+population size, <span class="math inline">\(\mu\)</span> is the maximum
+growth rate, <span class="math inline">\(\lambda\)</span> is the
+duration of the lag phase and <span class="math inline">\(C\)</span> is
+the difference between the initial population size and the maximum
+population size.</p>
+</div>
+<div id="logistic-growth-model" class="section level3">
+<h3>Logistic growth model</h3>
+<p>The logistic growth model can be parameterized by the following
+equation (Zwietering et al. 1990)</p>
+<p><span class="math display">\[
+  \log_{10} N(t) = \log_{10} N_0 + \frac{C}{1 + \exp{ \left(\frac{4
+\mu}{C}(\lambda - t)+2 \right) } }
+\]</span></p>
+<p>where <span class="math inline">\(N_0\)</span> is the initial
+population size, <span class="math inline">\(\mu\)</span> is the maximum
+growth rate, <span class="math inline">\(\lambda\)</span> is the
+duration of the lag phase and <span class="math inline">\(C\)</span> is
+the difference between the initial population size and the maximum
+population size.</p>
+</div>
+<div id="richards-growth-model" class="section level3">
+<h3>Richards growth model</h3>
+<p>The Richards growth model can be parameterized by the following
+equation (Zwietering et al. 1990)</p>
+<p><span class="math display">\[
+  \log_{10} N(t) = \log_{10} N_0 + C \left[1+\nu \cdot \exp{ \left(1 +
+\nu + \frac{\mu}{A}(1+\nu)^{1+1/\nu} (\lambda - t) \right)}
+\right]^{-1/\nu}
+\]</span></p>
+<p>where <span class="math inline">\(N_0\)</span> is the initial
+population size, <span class="math inline">\(\mu\)</span> is the maximum
+specific growth rate, <span class="math inline">\(\lambda\)</span> is
+the duration of the lag phase and <span class="math inline">\(C\)</span>
+is the difference between the initial population size and the maximum
+population size, and <span class="math inline">\(\nu\)</span> defines
+the sharpness of the transition between growth phases.</p>
+</div>
+<div id="baranyi-model-under-dynamic-conditions" class="section level3">
+<h3>Baranyi model under dynamic conditions</h3>
+<p>Baranyi and Roberts (1994) proposed a system of two differential
+equations to describe microbial growth:</p>
+<p><span class="math display">\[
+\frac{dN}{dt} = \frac{Q}{1+Q}\mu&#39;\left(1 - \frac{N}{N_{max}}
+\right)N
+\]</span></p>
+<p><span class="math display">\[
+\frac{dQ}{dt}=\mu&#39; \space Q
+\]</span></p>
+<p>Note that the maximum specific growth rate is written as <span class="math inline">\(\mu&#39;\)</span>. The reason for this is that
+<strong>biogrowth</strong> makes calculations in log10 scale for the
+population size. Therefore, for consistency with the equations for
+static conditions, we use a different notation in these equations. Both
+parameters are related by the identity <span class="math inline">\(\mu&#39; = \mu \cdot \log(10)\)</span>.</p>
+<p>In the Baranyi model, the deviations with respect to exponential
+growth are justified based on two hypotheses. It introduces the variable
+<span class="math inline">\(Q(t)\)</span>, which represents a
+theoretical substance that must be produced before the microorganism can
+enter the exponential growth phase. Hence, its initial value (<span class="math inline">\(Q_0\)</span>) defines the lag phase duration
+(under static conditions) as <span class="math inline">\(\lambda =
+\frac{\log (1+1/Q_{0})}{\mu}\)</span>. On the other hand, the stationary
+growth phase is defined by the logistic term <span class="math inline">\((1-N/N_{max})\)</span>, which reduces the growth
+rate as the microorganisms reach the maximum count.</p>
+<p>Note that the original paper by Baranyi and Roberts included an
+exponent, <span class="math inline">\(m\)</span>, in the term defining
+the stationary growth phase. However, that term is usually set to 1 by
+convention in predictive microbiology and, consequently, has been
+omitted from <strong>biogrowth</strong>. Also, in its original paper the
+specific growth rate of <span class="math inline">\(Q(t)\)</span> was
+defined by a different parameter (<span class="math inline">\(\nu\)</span>). However, because this variable does
+not correspond to any known substance, it is a convention in the field
+to set <span class="math inline">\(\nu = \mu\)</span>.</p>
+</div>
+<div id="baranyi-model-under-static-conditions" class="section level3">
+<h3>Baranyi model under static conditions</h3>
+<p>Oksuz and Buzrul (2020) calculated the solution of the Baranyi model
+for static conditions given by the following equation</p>
+<p><span class="math display">\[
+\log_{10} N = \log_{10} N_{max} + \log_{10}{ \frac{1 + \exp{ \left( \ln
+(10) \mu (t-\lambda) \right)} - \exp{- \ln (10) \mu \lambda}}
+  {\exp \left( \ln (10) \mu (t-\lambda) \right)- \exp{ \left( - \ln (10)
+\mu \lambda \right) + 10^{\log_{10} N_{max} - \log_{10} N_0}} }
+  }
+\]</span></p>
+<p>where <span class="math inline">\(N_0\)</span> is the initial
+population size, <span class="math inline">\(\mu\)</span> is the maximum
+specific growth rate and <span class="math inline">\(N_{max}\)</span> is
+the maximum growth rate, and <span class="math inline">\(\lambda\)</span> is the lag phase.</p>
+<div id="relationship-between-q0-and-the-lag-phase-duration" class="section level4">
+<h4>Relationship between Q0 and the lag phase duration</h4>
+<p>In the Baranyi model, the duration of the lag phase is determined by
+the initial value of the ideal substance <span class="math inline">\(Q(t)\)</span>, <span class="math inline">\(Q_0\)</span>. Disregarding the stationary phase,
+the Baranyi model becomes</p>
+<p><span class="math display">\[
+\frac{dN}{dt} = \frac{Q(t)}{1+Q(t)}\cdot \mu \cdot N(t) \\
+\frac{dQ}{dt} = \mu \cdot Q(t)
+\]</span></p>
+<p>where <span class="math inline">\(\mu\)</span> is in natural
+logarithmic scale. Considering that <span class="math inline">\(\mu\)</span> is constant (e.g. in constant
+environmental conditions), the second ODE is the usual exponential
+growth</p>
+<p><span class="math display">\[
+Q(t) = Q_0 e^{\mu \cdot t}
+\]</span></p>
+<p>So, the first differential equation becomes</p>
+<p><span class="math display">\[
+\frac{dN}{dt} = \frac{Q_0 e^{\mu \cdot t}}{1+Q_0 e^{\mu \cdot t}}\cdot
+\mu \cdot N(t)
+\]</span> For convenience, we can convert it to natural logarithm</p>
+<p><span class="math display">\[
+\frac{1}{N} \frac{dN}{dt} = \frac{d}{dt} \ln N = \frac{Q_0 e^{\mu \cdot
+t}}{1+Q_0 e^{\mu \cdot t}}\cdot \mu
+\]</span></p>
+<p>This equation also has an analytical solution</p>
+<p><span class="math display">\[
+\ln N = \ln N_0 + \ln \left( Q_0 e^{\mu t} + 1 \right) - \ln \left( Q_0
++ 1\right)
+\]</span></p>
+<p>In the exponential phase (i.e. outside of the lag phase), <span class="math inline">\(t&gt;&gt;\)</span>. Then, <span class="math inline">\(Q_0 e^{\mu t} &gt;&gt; 1\)</span> and the equation
+becomes</p>
+<p><span class="math display">\[
+\ln N = \ln N_0 + \ln \left( Q_0 e^{\mu t} \right) - \ln \left( Q_0 +
+1\right)
+\]</span></p>
+<p>This can be rearranged as</p>
+<p><span class="math display">\[
+\ln N/N_0 = \ln Q_0 + \mu \cdot t - \ln \left(Q_0 + 1 \right)
+\]</span></p>
+<p>This is the equation of a line tangent to the growth curve in the
+exponential phase. The lag phase duration is defined as the point where
+this line cuts the horizontal <span class="math inline">\(\ln N = \ln
+N_0\)</span>; i.e. <span class="math inline">\(\ln N/N_0 = 0\)</span>.
+Then, the lag phase duration (<span class="math inline">\(\lambda\)</span>) is the solution of:</p>
+<p><span class="math display">\[
+\ln Q_0 + \mu \cdot \lambda - \ln \left(Q_0 + 1 \right) = 0
+\]</span></p>
+<p>That is,</p>
+<p><span class="math display">\[
+\mu \cdot \lambda = \ln \left(Q_0 + 1 \right) - \ln Q_0 = \ln \frac{Q_0
++ 1}{Q_0}
+\]</span></p>
+<p>Ergo, the lag phase is given by</p>
+<p><span class="math display">\[
+\lambda = \frac{1}{\mu} \cdot \ln \left(1 + 1/Q_0 \right)
+\]</span></p>
+<p>and <span class="math inline">\(Q_0\)</span> is calculated from <span class="math inline">\(\lambda\)</span> by</p>
+<p><span class="math display">\[
+Q_0 = \frac{1}{e^{\mu\lambda} - 1}
+\]</span></p>
+<p>where <span class="math inline">\(\mu\)</span> is defined in natural
+(i.e. exp(1)) scale.</p>
+<p>The package includes the functions <code>Q0_to_lambda</code> and
+<code>lambda_to_Q0</code> to perform these operations. Please check the
+vignette <em>Models based on secondary models to predict growth under
+constant environmental conditions</em> for some critical points when
+using them.</p>
+</div>
+</div>
+<div id="trilinear-model-under-static-conditions" class="section level3">
+<h3>Trilinear model under static conditions</h3>
+<p>Buchanan et al. (1997) proposed a trilinear model as a more simple
+approach to describe the growth of microbial populations. This model is
+defined by the piece-wise equation.</p>
+<p>The lag phase is defined considering that, as long as <span class="math inline">\(t &lt; \lambda\)</span>, there is no growth
+(i.e. <span class="math inline">\(N = N_0\)</span>).</p>
+<p><span class="math display">\[
+\log_{10} N(t) = \log_{10} N_0; t \leq \lambda
+\]</span> The exponential phase is described considering that during
+this phase, the specific growth rate is constant, with slope <span class="math inline">\(\mu_{max}\)</span>.</p>
+<p><span class="math display">\[
+\log_{10} N(t) = \log_{10} N_0 + \mu(t-\lambda); t\in(\lambda,t_{max})
+\]</span></p>
+<p>Finally, the stationary phase is modeled considering that once <span class="math inline">\(N\)</span> reaches <span class="math inline">\(N_{max}\)</span>, it remains constant.</p>
+<p><span class="math display">\[
+\log_{10} N(t) = \log_{10} N_{max}; t \geq t_{max}
+\]</span></p>
+<p>where <span class="math inline">\(t_{max}\)</span>, defined is the
+time required for the population size to reach <span class="math inline">\(N_{max}\)</span> ($t_{max} = ( <em>{10}
+N</em>{max} - _{10} N_0 )/+ $).</p>
+</div>
+<div id="gathering-primary-models-metadata-directly-from-biogrowth" class="section level3">
+<h3>Gathering primary models metadata directly from biogrowth</h3>
+<p>The <strong>biogrowth</strong> package includes the
+<code>primary_model_data()</code> function, which provides information
+about the primary models included in the package. It takes just one
+argument (<code>model_name</code>). By default, this argument is
+<code>NULL</code>, and the function returns the identifiers of the
+available models.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">primary_model_data</span>()</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;modGompertz&quot; &quot;Baranyi&quot;     &quot;Trilinear&quot;   &quot;Logistic&quot;    &quot;Richards&quot;</span></span></code></pre></div>
+<p>If a model identifier is passed, it returns a list with mode
+meta-information.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>meta_info <span class="ot">&lt;-</span> <span class="fu">primary_model_data</span>(<span class="st">&quot;Trilinear&quot;</span>)</span></code></pre></div>
+<p>It includes the full reference</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>meta_info<span class="sc">$</span>ref</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Buchanan, R. L., Whiting, R. C., and Damert, W. C. (1997). When is simple good enough: A comparison of the Gompertz, Baranyi, and three-phase linear models for fitting bacterial growth curves. Food Microbiology, 14(4), 313-326. https://doi.org/10.1006/fmic.1997.0125&quot;</span></span></code></pre></div>
+<p>or the identifiers of the model parameters</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>meta_info<span class="sc">$</span>pars</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;logN0&quot;   &quot;logNmax&quot; &quot;mu&quot;      &quot;lambda&quot;</span></span></code></pre></div>
+</div>
+</div>
+<div id="secondary-growth-models-included-in-biogrowth" class="section level2">
+<h2>Secondary growth models included in biogrowth</h2>
+<p>Although other approaches for secondary modeling exist in the
+literature, the <strong>biogrowth</strong> package uses the gamma
+approach proposed by Zwietering et al. (1992). This approach assumes
+that the effect of each environmental factor on the growth rate is
+multiplicative and independent. Hence, the specific growth rate (<span class="math inline">\(\mu\)</span>) observed under a combination of
+environmental conditions (<span class="math inline">\(X_1\)</span>,
+<span class="math inline">\(X_2\)</span>,…,<span class="math inline">\(X_n\)</span>) is the result of multiplying the
+value of <span class="math inline">\(\mu\)</span> observed under optimal
+conditions for growth (<span class="math inline">\(\mu_{opt}\)</span>)
+times one <em>gamma factor</em> for each environmental factor (<span class="math inline">\(\gamma(X_i)\)</span>). Because gamma factors
+represent growth rates under sub-optimal conditions, they must take
+values between 0 and 1.</p>
+<p>Note that this approach does not consider interactions between the
+different terms. The reason for this is that, in the opinion of the
+authors, their implementation is still a research topic, without any
+model being broadly accepted. Therefore, the inclusion of interactions
+between terms is not in line with the philosophy of
+<strong>biogrowth</strong>, which aims at easing the application of
+broadly accepted modeling approaches.</p>
+<p><span class="math display">\[
+\mu = \mu_{opt} \cdot \gamma(X_1) \cdot \gamma(X_2) \cdot ... \cdot
+\gamma(X_n)
+\]</span></p>
+<div id="gamma-factors-by-zwietering" class="section level3">
+<h3>Gamma factors by Zwietering</h3>
+<p>Zwietering et al. (1992) defined several functions for different
+environmental factors (temperature, pH and water activity). These
+functions can be generalized as</p>
+<p><span class="math display">\[
+\gamma(X) = \left( \frac{X-X_{min}}{X_{opt}-X_{min}} \right)^n
+\]</span></p>
+<p>where <span class="math inline">\(X_min\)</span> is the minimum value
+of <span class="math inline">\(X\)</span> enabling growth, <span class="math inline">\(X_{opt}\)</span> is the optimum value of <span class="math inline">\(X\)</span> for growth and <span class="math inline">\(n\)</span> is the order of the model. The latter
+parameter usually takes the values 1, 2 or 3, depending on the
+environmental factor, and the type of population studied.</p>
+</div>
+<div id="cardinal-parameter-model-cpm" class="section level3">
+<h3>Cardinal Parameter Model (CPM)</h3>
+<p>Rosso et al. (1995) defined the following equation for gamma
+factors</p>
+<p><span class="math display">\[
+\gamma(X) = \frac{(X-X_{max})(X-X_{min})^n}
+{(X_{opt}-X_{min})^{n-1}( (X_{opt}-X_{min})(X-X_{opt}) -
+(X_{opt}-X_{max}) \cdot ((n-1)X_{opt} + X_{min}-n \cdot X) )}
+\]</span> with <span class="math inline">\(\gamma(X) = 0\)</span> for
+<span class="math inline">\(X \notin [X_{min}, X_{max}]\)</span>. In
+this equation, <span class="math inline">\(X_{min}\)</span>, <span class="math inline">\(X_{opt}\)</span> and <span class="math inline">\(X_{max}\)</span> are the minimum, maximum and
+optimum values of <span class="math inline">\(X\)</span> for microbial
+growth (usually called <em>cardinal parameters</em>). The coefficient
+<span class="math inline">\(n\)</span> is the shape parameter of the
+cardinal model (usually being fixed to 1, 2 or 3, depending on the case
+studied).</p>
+</div>
+<div id="adapted-full-ratkowsky-model" class="section level3">
+<h3>(Adapted) Full Ratkowsky model</h3>
+<p>The full Ratkowsky model (Ratkowsky et al., 1983) is an extension of
+the square-root model by Ratkowsky (Ratkowsky et al., 1982) that
+accounts for the decline of the growth rate for temperatures higher than
+the optimal one. It is described by the following equation</p>
+<p><span class="math display">\[
+\sqrt{\mu} = b \left( X-X_{min} \right) \left(1-e^{c(X-X_{max})} \right)
+\]</span> The application of the gamma concept requires that every gamma
+function takes values between 0 and 1, whereas the full Ratkowsky model
+takes values between 0 and <span class="math inline">\(\sqrt{\mu_{opt}}\)</span>. This can be adapted by
+defining a gamma function such as</p>
+<p><span class="math display">\[
+\gamma_{Ratkowsky}= \left( \frac{\sqrt{\mu}}{ \sqrt{\mu_{opt}} }
+\right)^2
+\]</span></p>
+<p>For that, we need to know the value of <span class="math inline">\(\sqrt{\mu_{opt}}\)</span>, which is not included
+as a parameter in the full Ratkowsky model. By setting the first
+derivative with respect to <span class="math inline">\(X\)</span> to 0
+and solving, we get</p>
+<p><span class="math display">\[
+X_{opt} = \frac{ W_n \left( e^{-cX_{min} +cX_{max} + 1} \right) +
+cX_{min} - 1 } {c}
+\]</span></p>
+<p>where <span class="math inline">\(W_n\)</span> is the Lambert-W
+function. Then, the maximum growth rate under optimal conditions is
+given by</p>
+<p><span class="math display">\[
+\sqrt{\mu_{opt}} = b \left( X_{opt}-X_{min} \right)
+\left(1-e^{c(X_{opt}-X_{max})} \right)
+\]</span></p>
+<p>and the gamma function for the Ratkowsky model can be calculated
+as</p>
+<p><span class="math display">\[
+\gamma_{Ratkowsky}= \left( \frac{\sqrt{\mu}}{ \sqrt{\mu_{opt}} }
+\right)^2 =
+\left( \frac{ b \left( X-X_{min} \right) \left(1-e^{c(X-X_{max})}
+\right)}
+{ b \left( X_{opt}-X_{min} \right) \left(1-e^{c(X_{opt}-X_{max})}
+\right)} \right)^2 =
+\left( \frac{ \left( X-X_{min} \right) \left(1-e^{c(X-X_{max})} \right)}
+{\left( X_{opt}-X_{min} \right) \left(1-e^{c(X_{opt}-X_{max})} \right)}
+\right)^2
+\]</span></p>
+<p>Note that parameter <span class="math inline">\(b\)</span> banishes
+after doing the division, so this model has 3 model parameters: <span class="math inline">\(c\)</span>, <span class="math inline">\(X_{min}\)</span> and <span class="math inline">\(X_{max}\)</span>.</p>
+</div>
+<div id="gathering-meta-data-about-secondary-models-directly-from-biogrowth" class="section level3">
+<h3>Gathering meta data about secondary models directly from
+biogrowth</h3>
+<p>The <strong>biogrowth</strong> package includes the
+<code>secondary_model_data()</code> function, which provides information
+about the secondary models it implements. It takes just one argument
+(<code>model_name</code>). By default, this argument is
+<code>NULL</code>, and the function returns the identifiers of the
+available models.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">secondary_model_data</span>()</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;CPM&quot;           &quot;Zwietering&quot;    &quot;fullRatkowsky&quot;</span></span></code></pre></div>
+<p>If, instead, one passes any valid model identifier, the function
+returns its meta-information.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>meta_info <span class="ot">&lt;-</span> <span class="fu">secondary_model_data</span>(<span class="st">&quot;CPM&quot;</span>)</span></code></pre></div>
+<p>This includes the full reference of the model</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>meta_info<span class="sc">$</span>ref</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Rosso, L., Lobry, J. R., Bajard, S., and Flandrois, J. P. (1995). Convenient Model To Describe the Combined Effects of Temperature and pH on Microbial Growth. Applied and Environmental Microbiology, 61(2), 610-616.&quot;</span></span></code></pre></div>
+<p>or the identifiers of its model parameters</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>meta_info<span class="sc">$</span>pars</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;xmin&quot; &quot;xopt&quot; &quot;xmax&quot; &quot;n&quot;</span></span></code></pre></div>
+</div>
+</div>
+<div id="summary-of-the-model-parameters" class="section level2">
+<h2>Summary of the model parameters</h2>
+<table>
+<colgroup>
+<col width="27%" />
+<col width="34%" />
+<col width="37%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Quantity</th>
+<th>Identifier</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\log_{10} N\)</span></td>
+<td><code>logN</code></td>
+<td>Decimal logarithm of the population size.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\log_{10} N_0\)</span></td>
+<td><code>logN0</code></td>
+<td>Decimal logarithm of the initial population size.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(N\)</span></td>
+<td><code>N</code></td>
+<td>Population size.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(N_0\)</span></td>
+<td><code>N0</code></td>
+<td>Initial population size.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(t\)</span></td>
+<td><code>t</code></td>
+<td>Elapsed time.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(C\)</span></td>
+<td><code>C</code></td>
+<td><span class="math inline">\(\log_{10} N_{max} - \log_{10}
+N_0\)</span>.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mu\)</span></td>
+<td><code>mu</code></td>
+<td>Specific growth rate.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\lambda\)</span></td>
+<td><code>lambda</code></td>
+<td>Duration of the lag phase.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\nu\)</span></td>
+<td><code>nu</code></td>
+<td>Sharpness of the transition between growth phases in the Richards
+model.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(Q\)</span></td>
+<td><code>Q</code></td>
+<td>Variable of the Baranyi model describing the lag phase</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(Q_0\)</span></td>
+<td><code>Q0</code></td>
+<td>Initial value of <span class="math inline">\(Q\)</span>.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(X_{min}\)</span></td>
+<td><code>xmin</code></td>
+<td>Minimum value of <span class="math inline">\(X\)</span> enabling
+growth.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(X_{opt}\)</span></td>
+<td><code>xopt</code></td>
+<td>Optimum value of <span class="math inline">\(X\)</span> for
+growth.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(X_{max}\)</span></td>
+<td><code>xmax</code></td>
+<td>Maximum value of <span class="math inline">\(X\)</span> enabling
+growth.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(n\)</span></td>
+<td><code>n</code></td>
+<td>Order of the secondary model.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mu_{opt}\)</span></td>
+<td><code>mu_opt</code></td>
+<td>Value of <span class="math inline">\(\mu\)</span> under optimal
+environmental conditions for growth.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="numerical-methods" class="section level2">
+<h2>Numerical methods</h2>
+<p>The <strong>biogrowth</strong> package uses <strong>FME</strong> for
+model fitting and <strong>deSolve</strong> for estimating population
+growth under dynamic conditions. Namely, the differential equations
+required for dynamic calculations are solved using the
+<code>ode()</code> function from <strong>deSolve</strong>, which
+implements several numerical methods. Model fitting is done using the
+<code>modFit()</code> function from <strong>FME</strong> for linear
+regression and the <code>modMCMC()</code> function from the same package
+for MCMC fitting. The functions in <strong>biogrowth</strong> use the
+default settings of these functions, although this can changed using the
+<code>...</code> argument included in every relevant function.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Baranyi, J., &amp; Roberts, T. A. (1994). A dynamic approach to
+predicting bacterial growth in food. International Journal of Food
+Microbiology, 23(3–4), 277–294. <a href="https://doi.org/10.1016/0168-1605(94)90157-0" class="uri">https://doi.org/10.1016/0168-1605(94)90157-0</a></p>
+<p>Bates, D. M., &amp; Watts, D. G. (2007). Nonlinear Regression
+Analysis and Its Applications (1 edition). Wiley-Interscience.</p>
+<p>Buchanan, R. L., Whiting, R. C., &amp; Damert, W. C. (1997). When is
+simple good enough: A comparison of the Gompertz, Baranyi, and
+three-phase linear models for fitting bacterial growth curves. Food
+Microbiology, 14(4), 313–326. <a href="https://doi.org/10.1006/fmic.1997.0125" class="uri">https://doi.org/10.1006/fmic.1997.0125</a></p>
+<p>Chang, W., Cheng, J., Allaire, J. J., Xie, Y., &amp; McPherson, J.
+(2017). shiny: Web Application Framework for R. <a href="https://CRAN.R-project.org/package=shiny" class="uri">https://CRAN.R-project.org/package=shiny</a></p>
+<p>Chang, W., &amp; Ribeiro, B. B. (2017). shinydashboard: Create
+Dashboards with “Shiny.” <a href="https://CRAN.R-project.org/package=shinydashboard" class="uri">https://CRAN.R-project.org/package=shinydashboard</a></p>
+<p>Haario, H., Laine, M., Mira, A., &amp; Saksman, E. (2006). DRAM:
+Efficient adaptive MCMC. Statistics and Computing, 16(4), 339–354. <a href="https://doi.org/10.1007/s11222-006-9438-0" class="uri">https://doi.org/10.1007/s11222-006-9438-0</a></p>
+<p>Hindmarsh, A. (1983). ODEPACK, A Systematized Collection of ODE
+Solvers , R. S. Stepleman et al. (Eds.), North-Holland, Amsterdam,
+(vol. 1 of ), pp. 55-64. IMACS Transactions on Scientific Computation,
+1, 55–64.</p>
+<p>Moré, J. J. (1978). The Levenberg-Marquardt algorithm: Implementation
+and theory. In Numerical Analysis (pp. 105–116). Springer, Berlin,
+Heidelberg. <a href="https://doi.org/10.1007/BFb0067700" class="uri">https://doi.org/10.1007/BFb0067700</a></p>
+<p>Oksuz, H. B., &amp; Buzrul, S. (2020). MONTE CARLO ANALYSIS FOR
+MICROBIAL GROWTH CURVES. Journal of Microbiology, Biotechnology and Food
+Sciences, 10(3), 418–423. <a href="https://doi.org/10.15414/jmbfs.2020.10.3.418-423" class="uri">https://doi.org/10.15414/jmbfs.2020.10.3.418-423</a></p>
+<p>Perez-Rodriguez, F., &amp; Valero, A. (2012). Predictive Microbiology
+in Foods. Springer.</p>
+<p>Poschet, F., Geeraerd, A. H., Van Loey, A. M., Hendrickx, M. E.,
+&amp; Van Impe, J. F. (2005). Assessing the optimal experiment setup for
+first order kinetic studies by Monte Carlo analysis. Food Control,
+16(10), 873–882. <a href="https://doi.org/10.1016/j.foodcont.2004.07.009" class="uri">https://doi.org/10.1016/j.foodcont.2004.07.009</a></p>
+<p>Ratkowsky, D. A., Lowry, R. K., McMeekin, T. A., Stokes, A. N., &amp;
+Chandler, R. E. (1983). Model for bacterial culture growth rate
+throughout the entire biokinetic temperature range. Journal of
+Bacteriology, 154(3), 1222–1226.</p>
+<p>Ratkowsky, D. A., Olley, J., McMeekin, T. A., &amp; Ball, A. (1982).
+Relationship between temperature and growth rate of bacterial cultures.
+J Bacteriol, 149(1), 1–5.</p>
+<p>Rosso, L., Lobry, J. R., Bajard, S., &amp; Flandrois, J. P. (1995).
+Convenient Model To Describe the Combined Effects of Temperature and pH
+on Microbial Growth. Applied and Environmental Microbiology, 61(2),
+610–616.</p>
+<p>Soetaert, K., &amp; Petzoldt, T. (2010). Inverse Modelling,
+Sensitivity and Monte Carlo Analysis in R Using Package FME. Journal of
+Statistical Software, 33(3). <a href="https://doi.org/10.18637/jss.v033.i03" class="uri">https://doi.org/10.18637/jss.v033.i03</a></p>
+<p>Soetaert, K., Petzoldt, T., &amp; Setzer, R. W. (2010). Solving
+Differential Equations in R: Package deSolve. Journal of Statistical
+Software, 33(9). <a href="https://doi.org/10.18637/jss.v033.i09" class="uri">https://doi.org/10.18637/jss.v033.i09</a></p>
+<p>Tocino, A., &amp; Ardanuy, R. (2002). Runge–Kutta methods for
+numerical solution of stochastic differential equations. Journal of
+Computational and Applied Mathematics, 138(2), 219–241. <a href="https://doi.org/10.1016/S0377-0427(01)00380-6" class="uri">https://doi.org/10.1016/S0377-0427(01)00380-6</a></p>
+<p>Wijtzes, T., Rombouts, F. M., Kant-Muermans, M. L. T., van ’t Riet,
+K., &amp; Zwietering, M. H. (2001). Development and validation of a
+combined temperature, water activity, pH model for bacterial growth rate
+of Lactobacillus curvatus. International Journal of Food Microbiology,
+63(1–2), 57–64. <a href="https://doi.org/10.1016/S0168-1605(00)00401-3" class="uri">https://doi.org/10.1016/S0168-1605(00)00401-3</a></p>
+<p>Zwietering, M. H., Jongenburger, I., Rombouts, F. M., &amp; Riet, K.
+van ’t. (1990). Modeling of the Bacterial Growth Curve. Applied and
+Environmental Microbiology, 56(6), 1875–1881.</p>
+<p>Zwietering, Marcel H., Wijtzes, T., De Wit, J. C., &amp; Riet, K. V.
+(1992). A Decision Support System for Prediction of the Microbial
+Spoilage in Foods. Journal of Food Protection, 55(12), 973–979. <a href="https://doi.org/10.4315/0362-028X-55.12.973" class="uri">https://doi.org/10.4315/0362-028X-55.12.973</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

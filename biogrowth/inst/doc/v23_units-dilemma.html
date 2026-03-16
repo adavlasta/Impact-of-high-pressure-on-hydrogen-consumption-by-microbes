@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>About the units of the growth rate (mu)</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">About the units of the growth rate
+(mu)</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(biogrowth)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;cowplot&#39;</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:lubridate&#39;:</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt;     stamp</span></span></code></pre></div>
+<p>One of the aspects that often lead to confusion in growth modeling
+are the units of the parameter describing the maximum growth rate (<span class="math inline">\(\mu\)</span>). This is due to the fact that,
+although the parameter has units of <span class="math inline">\([TIME]^{-1}\)</span>, the scale of the logarithm
+of the population size introduces a multiplying constant in this
+parameter. By default, <strong>biogrowth</strong> makes all the
+calculations using log10 scale. However, the <code>fit_growth()</code>
+and <code>predict_growth()</code> functions include the
+<code>logbase_mu</code> argument to accommodate for other units
+systems.</p>
+<p>This vignette tries to clarify this point about the units for <span class="math inline">\(mu\)</span> under both isothermal and dynamic
+conditions. It also illustrates how the <code>logbase_mu</code> argument
+should be used.</p>
+<div id="growth-rate-under-constant-environmental-conditions" class="section level2">
+<h2>Growth rate under constant environmental conditions</h2>
+<div id="mathematical-justification" class="section level3">
+<h3>Mathematical justification</h3>
+<p>Under constant environmental conditions, the typical growth curve has
+a sigmoidal shape:</p>
+<pre><code>#&gt; Scale for y is already present.
+#&gt; Adding another scale for y, which will replace the existing scale.</code></pre>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Then, parameter <span class="math inline">\(\mu\)</span> is defined
+as the slope of growth curve during the exponential phase. This can be
+expressed as</p>
+<p><span class="math display">\[
+\mu = \frac{\log N_{i+\Delta} - \log N_i}{\Delta t}
+\]</span></p>
+<p>where <span class="math inline">\(\log N_i\)</span> and <span class="math inline">\(\log N_{i+\Delta}\)</span> are the population
+sizes at two time points separated a distance <span class="math inline">\(\Delta t\)</span>. Because <span class="math inline">\(\log N\)</span> is unitless, <span class="math inline">\(\mu\)</span> has units of <span class="math inline">\([TIME]^{-1}\)</span>. However, the base of the
+logarithm affects the value of <span class="math inline">\(\mu\)</span>.</p>
+<p>As an example, let us assume that the exponential growth phase starts
+with a concentration <span class="math inline">\(N=1\)</span>. Let’s
+also assume that after 10 hours, the population has increased to <span class="math inline">\(N=100\)</span> (while remaning in the exponential
+phase). If we make the calculations of the growth rate in natural (<span class="math inline">\(e\)</span>) scale, we would calculate a value of
+<span class="math inline">\(\mu\)</span> of:</p>
+<p><span class="math display">\[
+\mu_e = \frac{\ln 100 - \ln 1}{10} = \frac{4.6 - 0}{10} = 0.46 \space
+h^{-1}
+\]</span></p>
+<p>Whereas, if we do the calculations using base 10 for the logarithms,
+we would calculate a value of <span class="math inline">\(\mu\)</span>
+of:</p>
+<p><span class="math display">\[
+\mu_{10} = \frac{\log_{10} 100 - \log_{10} 1}{10} = \frac{2 - 0}{10} =
+0.2 \space h^{-1}
+\]</span></p>
+<p>Therefore, although <span class="math inline">\(\mu\)</span> has
+units of <span class="math inline">\([TIME]^{-1}\)</span>, the scale of
+the logarithm of the population size affects its value. For this reason,
+it is advisable to include the base of the logarithm in the units of
+<span class="math inline">\(\mu\)</span> (such as <span class="math inline">\(\mu = 0.46 \ln CFU/h\)</span> or <span class="math inline">\(\mu = 0.2 \log_{10} CFU/h\)</span>).</p>
+<p>The conversion between both unit systems is very simple, just
+requiring the multiplication by a change of base:</p>
+<p><span class="math display">\[
+\mu_b = \mu_a \cdot \log_b a
+\]</span></p>
+<p>So, a growth rate expressed in log10 scale can be converted to
+natural scale by</p>
+<p><span class="math display">\[
+\mu_{e} = \mu_{10} \cdot \ln 10 = 0.2 \cdot 2.3 = 0.46 \ln CFU/h
+\]</span></p>
+</div>
+<div id="implementation-in-biogrowth" class="section level3">
+<h3>Implementation in biogrowth</h3>
+<p>The function <code>predict_growth()</code> includes the
+<code>logbase_mu</code> argument to account for different units of <span class="math inline">\(\mu\)</span>. By default, all the calculations are
+done in log10 scale. Therefore, the value of <span class="math inline">\(mu\)</span> indicates the time required for one
+log-increase in the exponential phase. This is illustrated in this plot,
+where the time for 1 log(10) increase in the exponential growth phase is
+defined by <span class="math inline">\(\mu\)</span>
+(<code>mu=1</code>).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">predict_growth</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="at">length =</span> <span class="dv">100</span>),</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>               <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;Trilinear&quot;</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                    <span class="at">logN0 =</span> <span class="dv">2</span>, <span class="at">lambda =</span> <span class="dv">1</span>, <span class="at">logNmax =</span> <span class="dv">9</span>, <span class="at">mu =</span> <span class="dv">1</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>               <span class="at">environment =</span> <span class="st">&quot;constant&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="fu">plot</span>() <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="fu">theme_gray</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Instead of the default log10 base, <span class="math inline">\(\mu\)</span> can be defined in other units using
+the <code>logbase_mu</code> argument. For instance, this parameter can
+be defined in natural scale (i.e. <span class="math inline">\(e=e^1=\exp
+(1)\)</span>) passing <code>logbase_mu=exp(1)</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">predict_growth</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="at">length =</span> <span class="dv">100</span>),</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>               <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;Trilinear&quot;</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                    <span class="at">logN0 =</span> <span class="dv">2</span>, <span class="at">lambda =</span> <span class="dv">1</span>, <span class="at">logNmax =</span> <span class="dv">9</span>, <span class="at">mu =</span> <span class="dv">1</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>               <span class="at">environment =</span> <span class="st">&quot;constant&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>               <span class="at">logbase_mu =</span> <span class="fu">exp</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="fu">plot</span>() <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="fu">theme_gray</span>() <span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">2</span>, <span class="dv">6</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; Scale for y is already present.</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; Adding another scale for y, which will replace the existing scale.</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Note that, in this case, <span class="math inline">\(mu\)</span> no
+longer corresponds to the slope of the growth curve because the y-axis
+is defined in a different scale.</p>
+<p>The following plot shows how using the right conversion (<span class="math inline">\(\mu_b = \mu_a \cdot \log_b a\)</span>) results in
+equivalent growth curves under isothermal conditions:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>my_time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">20</span>, <span class="at">length =</span> <span class="dv">1000</span>)  <span class="co"># Vector of time points for the calculations</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="st">`</span><span class="at">base 2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">predict_growth</span>(my_time,</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;Baranyi&quot;</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>                        <span class="at">logN0 =</span> <span class="dv">0</span>, <span class="at">logNmax =</span> <span class="dv">6</span>, <span class="at">mu =</span> <span class="dv">1</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">10</span>, <span class="at">base =</span> <span class="dv">2</span>), </span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>                        <span class="at">lambda =</span> <span class="dv">5</span>),</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>                   <span class="at">environment =</span> <span class="st">&quot;constant&quot;</span>, </span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>                   <span class="at">logbase_mu =</span> <span class="dv">2</span>),</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>    <span class="st">`</span><span class="at">base 10</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">predict_growth</span>(my_time,</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;Baranyi&quot;</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>                        <span class="at">logN0 =</span> <span class="dv">0</span>, <span class="at">logNmax =</span> <span class="dv">6</span>, <span class="at">mu =</span> <span class="dv">1</span>, </span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>                        <span class="at">lambda =</span> <span class="dv">5</span>),</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>                   <span class="at">environment =</span> <span class="st">&quot;constant&quot;</span>),</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>    <span class="st">`</span><span class="at">base e</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">predict_growth</span>(my_time,</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;Baranyi&quot;</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>                        <span class="at">logN0 =</span> <span class="dv">0</span>, <span class="at">logNmax =</span> <span class="dv">6</span>, <span class="at">mu =</span> <span class="dv">1</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">10</span>), </span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>                        <span class="at">lambda =</span> <span class="dv">5</span>),</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>                   <span class="at">environment =</span> <span class="st">&quot;constant&quot;</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>                   <span class="at">logbase_mu =</span> <span class="fu">exp</span>(<span class="dv">1</span>))</span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>    <span class="fu">map</span>(., <span class="sc">~</span>.<span class="sc">$</span>simulation) <span class="sc">%&gt;%</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a>    <span class="fu">imap_dfr</span>(., <span class="sc">~</span> <span class="fu">mutate</span>(.x, <span class="at">model =</span> <span class="fu">as.character</span>(.y))) <span class="sc">%&gt;%</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> logN, <span class="at">colour =</span> model, <span class="at">linetype =</span> model, <span class="at">size =</span> model)) <span class="sc">+</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a>  <span class="fu">scale_size_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt; ℹ Please use `linewidth` instead.</span></span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a><span class="co">#&gt; This warning is displayed once every 8 hours.</span></span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt; Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; generated.</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="unit-interpration-for-model-fitting" class="section level3">
+<h3>Unit interpration for model fitting</h3>
+<p>The same considerations apply to fitting a model to data gathered
+under constant environmental conditions. By default, the model is fitted
+using log10 scale for mu.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>my_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">75</span>, <span class="dv">100</span>), </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>                      <span class="at">logN =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="fl">2.5</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">primary =</span> <span class="st">&quot;Baranyi&quot;</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>known <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">lambda =</span> <span class="dv">25</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>start <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">logNmax =</span> <span class="dv">8</span>, <span class="at">logN0 =</span> <span class="dv">2</span>, <span class="at">mu =</span> .<span class="dv">3</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>primary_fit10 <span class="ot">&lt;-</span> <span class="fu">fit_growth</span>(my_data, models, start, known,</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>                          <span class="at">environment =</span> <span class="st">&quot;constant&quot;</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>)</span></code></pre></div>
+<p>This is represented in the print method for the instance of
+<code>FitIsoGrowth</code></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>primary_fit10</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; Primary growth model fitted to data</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; Growth model: Baranyi </span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; Estimated parameters:</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt;   logNmax     logN0        mu </span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 8.0000221 2.0994862 0.1978506 </span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; Fixed parameters:</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; lambda </span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt;     25 </span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; Parameter mu defined in log-10 scale</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; Population size defined in log-10 scale</span></span></code></pre></div>
+<p>and is saved as the <code>logbase_mu</code> argument</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>primary_fit10<span class="sc">$</span>logbase_mu</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
+<p>This base can be changed using the <code>logbase_mu</code> argument.
+For instance, we can set it to natural scale
+(<code>logbase_mu = exp(1)</code>):</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>primary_fit_e <span class="ot">&lt;-</span> <span class="fu">fit_growth</span>(my_data, models, start, known,</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>                          <span class="at">environment =</span> <span class="st">&quot;constant&quot;</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>                          <span class="at">logbase_mu =</span> <span class="fu">exp</span>(<span class="dv">1</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>                          )</span></code></pre></div>
+<p>Note that, in both cases, the models fitted are identical</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">plot_grid</span>(<span class="fu">plot</span>(primary_fit_e), <span class="fu">plot</span>(primary_fit10))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>However, the parameter estimates for <span class="math inline">\(\mu\)</span> are different due to the use of a
+different scale</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">print</span>(primary_fit_e)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt; Primary growth model fitted to data</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; Growth model: Baranyi </span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; Estimated parameters:</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt;   logNmax     logN0        mu </span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co">#&gt; 8.0000221 2.0994862 0.4555678 </span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#&gt; Fixed parameters:</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co">#&gt; lambda </span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#&gt;     25 </span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt; Parameter mu defined in log-e scale</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co">#&gt; Population size defined in log-10 scale</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">print</span>(primary_fit10)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co">#&gt; Primary growth model fitted to data</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; Growth model: Baranyi </span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt; Estimated parameters:</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt;   logNmax     logN0        mu </span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; 8.0000221 2.0994862 0.1978506 </span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt; Fixed parameters:</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt; lambda </span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt;     25 </span></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="co">#&gt; Parameter mu defined in log-10 scale</span></span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a><span class="co">#&gt; Population size defined in log-10 scale</span></span></code></pre></div>
+<p>Both parameter values can be converted using the usual
+transformation</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">coef</span>(primary_fit10)[<span class="st">&quot;mu&quot;</span>] <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">10</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co">#&gt;        mu </span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt; 0.4555678</span></span></code></pre></div>
+</div>
+</div>
+<div id="dynamic-environmental-conditions" class="section level2">
+<h2>Dynamic environmental conditions</h2>
+<p>Under dynamic environmental conditions, exponential growth is often
+described as a first order differential equation:</p>
+<p><span class="math display">\[
+\frac{dN}{dt} = \mu \cdot N
+\]</span></p>
+<p>In this case, the growth rate is defined in natural scale (i.e. base
+<span class="math inline">\(e\)</span>). Nonetheless, the model can be
+easily adapted to any base (<span class="math inline">\(b\)</span>)
+using the equation described above:</p>
+<p><span class="math display">\[
+\frac{dN}{dt} = \mu_b \cdot \ln b \cdot N
+\]</span></p>
+<p>When making predictions, this definition has the same issues in the
+interpretation as the previous case. As an example, let us define a
+model defined based on secondary models (with large <span class="math inline">\(Q_0\)</span> to avoid a lag phase)</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>q0 <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>mu_opt <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># in log10 scale</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>my_primary <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">mu_opt =</span> mu_opt,</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                   <span class="at">Nmax =</span> <span class="fl">1e8</span>,<span class="at">N0 =</span> <span class="fl">1e2</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>                   <span class="at">Q0 =</span> q0)</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>sec_temperature <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;CPM&quot;</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>                        <span class="at">xmin =</span> <span class="dv">5</span>, <span class="at">xopt =</span> <span class="dv">35</span>, <span class="at">xmax =</span> <span class="dv">40</span>, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>my_secondary <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">temperature =</span> sec_temperature)</span></code></pre></div>
+<p>If we make a prediction for a profile with constant temperature:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>my_conditions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>),</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>                            <span class="at">temperature =</span> <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">35</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>                            )</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>my_times <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="at">length =</span> <span class="dv">1000</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>dynamic_prediction <span class="ot">&lt;-</span> <span class="fu">predict_growth</span>(<span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>, </span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>                                     my_times,</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>                                     my_primary,</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>                                     my_secondary,</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>                                     my_conditions)</span></code></pre></div>
+<p>Because, by default, the calculations are done in log10 scale, the
+value of <span class="math inline">\(\mu\)</span>
+(<code>mu_opt=1</code>) still matches the time required to increase the
+population size in one log10:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">plot</span>(dynamic_prediction) <span class="sc">+</span> <span class="fu">theme_gray</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>However, if the calculations are done using natural base for <span class="math inline">\(\mu\)</span>, this is not the case any more.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">predict_growth</span>(<span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>, </span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>               my_times,</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>               my_primary,</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>               my_secondary,</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>               my_conditions,</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>               <span class="at">logbase_mu =</span> <span class="fu">exp</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="fu">plot</span>() <span class="sc">+</span> <span class="fu">theme_gray</span>() <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">2</span>, <span class="dv">7</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="co">#&gt; Scale for y is already present.</span></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="co">#&gt; Adding another scale for y, which will replace the existing scale.</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>For the same reasons as for the static case, we must use the unit
+conversion of the growth rate to obtain equivalent model
+predictions:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>my_conditions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">40</span>),</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>                            <span class="at">temperature =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">35</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>                            )</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>sec_temperature <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;Zwietering&quot;</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>    <span class="at">xmin =</span> <span class="dv">25</span>, <span class="at">xopt =</span> <span class="dv">35</span>, <span class="at">n =</span> <span class="dv">1</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>my_secondary <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>    <span class="at">temperature =</span> sec_temperature</span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>    )</span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>my_times <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">50</span>, <span class="at">length =</span> <span class="dv">1000</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a><span class="fu">list</span>(<span class="st">`</span><span class="at">base 10</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">predict_growth</span>(<span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>, </span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a>                                     my_times, </span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a>                                     <span class="fu">list</span>(<span class="at">mu =</span> <span class="dv">2</span>, <span class="at">Nmax =</span> <span class="fl">1e7</span>, <span class="at">N0 =</span> <span class="dv">1</span>, <span class="at">Q0 =</span> <span class="fl">1e-3</span>), </span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a>                                     my_secondary,</span>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a>                                     my_conditions</span>
+<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a>                                     ),</span>
+<span id="cb18-22"><a href="#cb18-22" tabindex="-1"></a>     <span class="st">`</span><span class="at">base e</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">predict_growth</span>(<span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>, </span>
+<span id="cb18-23"><a href="#cb18-23" tabindex="-1"></a>                                     my_times, </span>
+<span id="cb18-24"><a href="#cb18-24" tabindex="-1"></a>                                     <span class="fu">list</span>(<span class="at">mu =</span> <span class="dv">2</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">10</span>), <span class="at">Nmax =</span> <span class="fl">1e7</span>, <span class="at">N0 =</span> <span class="dv">1</span>, <span class="at">Q0 =</span> <span class="fl">1e-3</span>), </span>
+<span id="cb18-25"><a href="#cb18-25" tabindex="-1"></a>                                     my_secondary,</span>
+<span id="cb18-26"><a href="#cb18-26" tabindex="-1"></a>                                     my_conditions,</span>
+<span id="cb18-27"><a href="#cb18-27" tabindex="-1"></a>                                     <span class="at">logbase_mu =</span> <span class="fu">exp</span>(<span class="dv">1</span>)</span>
+<span id="cb18-28"><a href="#cb18-28" tabindex="-1"></a>                                     ),</span>
+<span id="cb18-29"><a href="#cb18-29" tabindex="-1"></a>     <span class="st">`</span><span class="at">base 2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">predict_growth</span>(<span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>, </span>
+<span id="cb18-30"><a href="#cb18-30" tabindex="-1"></a>                                     my_times, </span>
+<span id="cb18-31"><a href="#cb18-31" tabindex="-1"></a>                                     <span class="fu">list</span>(<span class="at">mu =</span> <span class="dv">2</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">10</span>, <span class="at">base=</span><span class="dv">2</span>), <span class="at">Nmax =</span> <span class="fl">1e7</span>, <span class="at">N0 =</span> <span class="dv">1</span>, <span class="at">Q0 =</span> <span class="fl">1e-3</span>), </span>
+<span id="cb18-32"><a href="#cb18-32" tabindex="-1"></a>                                     my_secondary,</span>
+<span id="cb18-33"><a href="#cb18-33" tabindex="-1"></a>                                     my_conditions,</span>
+<span id="cb18-34"><a href="#cb18-34" tabindex="-1"></a>                                     <span class="at">logbase_mu =</span> <span class="dv">2</span></span>
+<span id="cb18-35"><a href="#cb18-35" tabindex="-1"></a>                                     )</span>
+<span id="cb18-36"><a href="#cb18-36" tabindex="-1"></a>     ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-37"><a href="#cb18-37" tabindex="-1"></a>    <span class="fu">map</span>(., <span class="sc">~</span>.<span class="sc">$</span>simulation) <span class="sc">%&gt;%</span></span>
+<span id="cb18-38"><a href="#cb18-38" tabindex="-1"></a>    <span class="fu">imap_dfr</span>(., <span class="sc">~</span> <span class="fu">mutate</span>(.x, <span class="at">model =</span> <span class="fu">as.character</span>(.y))) <span class="sc">%&gt;%</span></span>
+<span id="cb18-39"><a href="#cb18-39" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb18-40"><a href="#cb18-40" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> logN, <span class="at">colour =</span> model, <span class="at">linetype =</span> model, <span class="at">size =</span> model)) <span class="sc">+</span></span>
+<span id="cb18-41"><a href="#cb18-41" tabindex="-1"></a>  <span class="fu">scale_size_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="a-note-when-comparing-predictions-based-on-primary-models-against-models-with-secondary-models" class="section level2">
+<h2>A note when comparing predictions based on primary models against
+models with secondary models</h2>
+<p>As described in the vignette <em>Using models based on secondary
+models to predict growth under constant environmental conditions</em>,
+in some situations it can be advantageous the use of models based on
+secondary models to make predictions under static environmental
+conditions. However, one must be very careful with the unit system when
+making these predictions as the relationship between <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(Q_0\)</span> is also affected by the units
+system.</p>
+<p>As an illustration, let’s define a growth model based on secondary
+models.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>q0 <span class="ot">&lt;-</span> <span class="fl">1e-3</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>mu_opt <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># in ln scale</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>my_primary <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">mu_opt =</span> mu_opt,</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>                   <span class="at">Nmax =</span> <span class="fl">1e8</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>                   <span class="at">N0 =</span> <span class="fl">1e2</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>                   <span class="at">Q0 =</span> q0)</span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>sec_temperature <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;CPM&quot;</span>,</span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>                        <span class="at">xmin =</span> <span class="dv">5</span>, <span class="at">xopt =</span> <span class="dv">35</span>, <span class="at">xmax =</span> <span class="dv">40</span>, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a>my_secondary <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">temperature =</span> sec_temperature)</span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a></span>
+<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a>my_conditions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">30</span>),</span>
+<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a>                            <span class="at">temperature =</span> <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">35</span>)</span>
+<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a>                            )</span>
+<span id="cb19-17"><a href="#cb19-17" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" tabindex="-1"></a>my_times <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">30</span>, <span class="at">length =</span> <span class="dv">1000</span>)</span>
+<span id="cb19-19"><a href="#cb19-19" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" tabindex="-1"></a>dynamic_prediction <span class="ot">&lt;-</span> <span class="fu">predict_growth</span>(<span class="at">environment =</span> <span class="st">&quot;dynamic&quot;</span>, </span>
+<span id="cb19-21"><a href="#cb19-21" tabindex="-1"></a>                                     my_times,</span>
+<span id="cb19-22"><a href="#cb19-22" tabindex="-1"></a>                                     my_primary,</span>
+<span id="cb19-23"><a href="#cb19-23" tabindex="-1"></a>                                     my_secondary,</span>
+<span id="cb19-24"><a href="#cb19-24" tabindex="-1"></a>                                     my_conditions,</span>
+<span id="cb19-25"><a href="#cb19-25" tabindex="-1"></a>                                     <span class="at">logbase_mu =</span> <span class="fu">exp</span>(<span class="dv">1</span>))</span>
+<span id="cb19-26"><a href="#cb19-26" tabindex="-1"></a></span>
+<span id="cb19-27"><a href="#cb19-27" tabindex="-1"></a><span class="fu">plot</span>(dynamic_prediction)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>In the Baranyi model, the parameter <span class="math inline">\(Q_0\)</span> is related to the duration of the lag
+phase under static conditions by</p>
+<p><span class="math display">\[
+\lambda = \frac{ \log (1 + 1/Q_0 )}{\mu}
+\]</span></p>
+<p>However, this relationship is also affected by the same issues with
+the base of the logarithm. If this is not accounted for when making
+predictions under static conditions (i.e. based on a primary model that
+defines <span class="math inline">\(\lambda\)</span>), there will be a
+discrepancy between the models.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>bad_lambda <span class="ot">&lt;-</span> <span class="fu">Q0_to_lambda</span>(q0, mu_opt)</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>bad_primary_model <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;Baranyi&quot;</span>,</span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>                          <span class="at">logN0 =</span> <span class="dv">2</span>, <span class="at">logNmax =</span> <span class="dv">8</span>, <span class="at">mu =</span> mu_opt, </span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>                          <span class="at">lambda =</span> bad_lambda)</span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a>bad_prediction <span class="ot">&lt;-</span> <span class="fu">predict_growth</span>(my_times, bad_primary_model,</span>
+<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a>                                 <span class="at">logbase_mu =</span> <span class="fu">exp</span>(<span class="dv">1</span>))</span>
+<span id="cb20-10"><a href="#cb20-10" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" tabindex="-1"></a><span class="fu">plot</span>(bad_prediction, <span class="at">line_col =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb20-12"><a href="#cb20-12" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> logN), <span class="at">linetype =</span> <span class="dv">2</span>, </span>
+<span id="cb20-13"><a href="#cb20-13" tabindex="-1"></a>              <span class="at">data =</span> dynamic_prediction<span class="sc">$</span>simulation)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>In order to propertly compare between both modelling approaches, the
+argument <code>logbase_mu</code> has to be defined when calling
+<code>Q0_to_lambda</code> (or, equivalently,
+<code>lambda_to_Q0</code>).</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>good_lambda <span class="ot">&lt;-</span> <span class="fu">Q0_to_lambda</span>(q0, mu_opt, <span class="at">logbase_mu =</span> <span class="fu">exp</span>(<span class="dv">1</span>))</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>good_primary_model <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">model =</span> <span class="st">&quot;Baranyi&quot;</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>                           <span class="at">logN0 =</span> <span class="dv">2</span>, <span class="at">logNmax =</span> <span class="dv">8</span>, <span class="at">mu =</span> mu_opt, </span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>                           <span class="at">lambda =</span> good_lambda)</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>good_prediction <span class="ot">&lt;-</span> <span class="fu">predict_growth</span>(my_times, good_primary_model,</span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>                                  <span class="at">logbase_mu =</span> <span class="fu">exp</span>(<span class="dv">1</span>))</span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a><span class="fu">plot</span>(good_prediction, <span class="at">line_col =</span> <span class="st">&quot;green&quot;</span>) <span class="sc">+</span></span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> logN), <span class="at">linetype =</span> <span class="dv">2</span>,</span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a>              <span class="at">data =</span> dynamic_prediction<span class="sc">$</span>simulation)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
